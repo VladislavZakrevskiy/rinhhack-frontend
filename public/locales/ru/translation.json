@@ -23,5 +23,9 @@
   "lastModified": "Изменено",
   "url": "URL",
   "name": "Название",
-  "site url": "URL (веб)"
+  "site url": "URL (веб)",
+  "create": "Создать",
+  "delete selected": "Удалить выделенное",
+  "success": "Успешно!",
+  "operation was did successful": "Операция выполена успешно"
 }

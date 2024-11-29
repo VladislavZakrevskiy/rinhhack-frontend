@@ -29,6 +29,7 @@ import { $api } from "@/shared/api/api";
 import { AxiosResponse } from "axios";
 import { DeleteRegular, EditRegular } from "@fluentui/react-icons";
 import EmployeeModal from "../Modals/User/UserModal";
+import { UserRoles } from "@/entities/User";
 
 interface DataTableProps {}
 
@@ -78,7 +79,7 @@ export const UserDataTable: FC<DataTableProps> = () => {
 	const { t } = useTranslation();
 	const { currentPage, setData } = useAdminStore();
 	const {
-		selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected },
+		selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected, selectedRows },
 		getRows,
 		sort: { getSortDirection, sort, toggleColumnSort },
 	} = useTableFeatures({ columns: tableColumns, items: currentPage?.data ? (currentPage.data as Employee[]) : [] }, [
@@ -117,21 +118,34 @@ export const UserDataTable: FC<DataTableProps> = () => {
 			{ intent: "error" },
 		);
 
+	const notifySuccess = () =>
+		dispatchToast(
+			<Toast>
+				<ToastTitle>{t("success")}</ToastTitle>
+				<ToastBody>{t("operation was did successful")}</ToastBody>
+			</Toast>,
+			{ intent: "success" },
+		);
+
 	const openModal = (mode: "create" | "update" | "delete", currentUser: Employee) => {
 		setCurrentUser(currentUser);
 		setMode(mode);
 		setIsOpen(true);
 	};
 
-	const onSave = async () => {
+	const onSave = async (saveData: Partial<Employee>) => {
 		switch (mode) {
 			case "create":
+				await $api.post("/users/create", saveData);
 				break;
 			case "delete":
+				await $api.delete("/users/delete/" + saveData.id);
 				break;
 			case "update":
+				await $api.patch("/users/update/" + saveData.id, saveData);
 				break;
 		}
+		fetchUsers();
 	};
 
 	useEffect(() => {
@@ -173,6 +187,17 @@ export const UserDataTable: FC<DataTableProps> = () => {
 		[toggleAllRows],
 	);
 
+	const deleteSelected = async () => {
+		try {
+			for (const row of selectedRows) {
+				console.log(rows, row);
+			}
+			notifySuccess();
+		} catch (e) {
+			notify();
+		}
+	};
+
 	return (
 		<>
 			<EmployeeModal
@@ -184,8 +209,25 @@ export const UserDataTable: FC<DataTableProps> = () => {
 			/>
 			<Toaster toasterId={toasterId} />
 			<div className="m-2 flex gap-2">
-				<Button appearance="primary">Create</Button>
-				<Button appearance="primary">Delete All</Button>
+				<Button
+					onClick={() =>
+						openModal("create", {
+							department: "",
+							email: "",
+							first_name: "",
+							id: "",
+							last_name: "",
+							position: "",
+							role: UserRoles.USER,
+						})
+					}
+					appearance="primary"
+				>
+					Create
+				</Button>
+				<Button onClick={deleteSelected} appearance="primary">
+					Delete All
+				</Button>
 			</div>
 			<Table sortable>
 				<TableHeader>

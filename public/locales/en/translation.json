@@ -23,5 +23,9 @@
   "lastModified": "Last Modified",
   "url": "URL",
   "name": "Name",
-  "site url": "URL (web)"
+  "site url": "URL (web)",
+  "create": "Create",
+  "delete selected": "Delete Selected",
+  "success": "Success!",
+  "operation was did successful": "Opetion was did successful!"
 }

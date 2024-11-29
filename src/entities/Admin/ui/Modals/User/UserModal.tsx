@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Employee } from "@/shared/types/Employee";
 import { UserRoles } from "@/entities/User";
-import { v4 } from "uuid";
 import {
 	ChoiceGroup,
 	DefaultButton,
@@ -15,7 +14,7 @@ import {
 interface EmployeeModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	onSave: (employee: Employee) => Promise<void>;
+	onSave: (employee: Omit<Employee, "id">) => Promise<void>;
 	employee?: Employee; // Для редактирования сотрудника
 	mode: "create" | "update" | "delete"; // Режим: создать, обновить или удалить
 }
@@ -29,8 +28,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 	const [department, setDepartment] = useState(employee?.department || "");
 
 	const handleSave = async () => {
-		const newEmployee: Employee = {
-			id: employee?.id || v4(), // Новый ID для создания, или старый для обновления
+		const newEmployee: Omit<Employee, "id"> = {
 			first_name: firstName,
 			last_name: lastName,
 			email,
@@ -39,12 +37,12 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 			department,
 		};
 		await onSave(newEmployee);
-		onClose(); // Закрываем модалку после сохранения
+		onClose();
 	};
 
 	const handleDelete = async () => {
 		if (employee) {
-			await onSave(employee); // Для удаления можно передавать просто ID
+			await onSave(employee);
 		}
 		onClose();
 	};

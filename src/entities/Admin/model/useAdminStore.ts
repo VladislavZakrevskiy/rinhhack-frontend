@@ -18,7 +18,7 @@ interface State {
 	addPage: (type: PageType, id?: string) => void;
 	setCurrentPage: (pageId: string) => void;
 	removePage: (pageId: string) => void;
-	setData: <T extends Employee>(pageId: string, data: T[]) => void;
+	setData: <T extends ExcelFile | Employee>(pageId: string, data: T[]) => void;
 }
 
 export const useAdminStore = create<State>((set, get) => ({
@@ -50,6 +50,7 @@ export const useAdminStore = create<State>((set, get) => ({
 		set((store) => ({ currentPageId: pageId, currentPage: store.pages.find(({ id }) => id === pageId) })),
 
 	setData: (pageId, data) =>
+		// @ts-ignore
 		set((state) => ({
 			pages: state.pages.map((page) => (page.id === pageId ? { ...page, data } : page)),
 		})),

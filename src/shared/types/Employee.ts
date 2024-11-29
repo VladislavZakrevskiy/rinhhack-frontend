@@ -2,8 +2,8 @@ import { UserRoles } from "@/entities/User";
 
 export interface Employee {
 	id: string;
-	first_name: string;
-	last_name: string;
+	firstName: string;
+	lastName: string;
 	email: string;
 	role: UserRoles;
 	position: string; //это должность

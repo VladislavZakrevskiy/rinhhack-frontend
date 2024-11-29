@@ -57,7 +57,7 @@ const tableColumns: TableColumnDefinition<ExcelFile>[] = [
 	createTableColumn<ExcelFile>({
 		columnId: "creator",
 		compare: (a, b) => {
-			return a?.creator.first_name?.localeCompare(b?.creator.first_name);
+			return a?.creator.firstName?.localeCompare(b?.creator.firstName);
 		},
 	}),
 ];
@@ -75,7 +75,7 @@ export const TableDataTable: FC<DataTableProps> = () => {
 		sort: { getSortDirection, sort, toggleColumnSort },
 	} = useTableFeatures({ columns: tableColumns, items: currentPage?.data ? (currentPage.data as ExcelFile[]) : [] }, [
 		useTableSort({
-			defaultSortState: { sortColumn: "first_name", sortDirection: "ascending" },
+			defaultSortState: { sortColumn: "firstName", sortDirection: "ascending" },
 		}),
 		useTableSelection({
 			selectionMode: "multiselect",
@@ -201,9 +201,9 @@ export const TableDataTable: FC<DataTableProps> = () => {
 							creator: {
 								department: "",
 								email: "",
-								first_name: "",
+								firstName: "",
 								id: "",
-								last_name: "",
+								lastName: "",
 								position: "",
 								role: UserRoles.USER,
 							},
@@ -261,13 +261,13 @@ export const TableDataTable: FC<DataTableProps> = () => {
 										<TableCellLayout
 											media={
 												<Avatar
-													aria-label={item.creator.first_name}
-													name={item.creator.first_name + " " + item.creator.last_name}
+													aria-label={item.creator.firstName}
+													name={item.creator.firstName + " " + item.creator.lastName}
 													badge={{ status: "available" }}
 												/>
 											}
 										>
-											{item.creator.first_name} {item.creator.last_name}
+											{item.creator.firstName} {item.creator.lastName}
 										</TableCellLayout>
 									</TableCell>
 									<TableCell role="gridcell">

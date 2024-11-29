@@ -27,5 +27,8 @@
   "create": "Create",
   "delete selected": "Delete Selected",
   "success": "Success!",
-  "operation was did successful": "Opetion was did successful!"
+  "operation was did successful": "Opetion was did successful!",
+  "Hello": "Welcome",
+  "error fetch excel": "Error of fetching tables",
+  "no tables": "No Tables"
 }

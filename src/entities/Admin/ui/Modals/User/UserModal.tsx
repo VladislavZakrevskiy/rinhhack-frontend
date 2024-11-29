@@ -20,8 +20,8 @@ interface EmployeeModalProps {
 }
 
 const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, employee, mode }) => {
-	const [firstName, setFirstName] = useState(employee?.first_name || "");
-	const [lastName, setLastName] = useState(employee?.last_name || "");
+	const [firstName, setFirstName] = useState(employee?.firstName || "");
+	const [lastName, setLastName] = useState(employee?.lastName || "");
 	const [email, setEmail] = useState(employee?.email || "");
 	const [role, setRole] = useState<UserRoles>(employee?.role || UserRoles.USER);
 	const [position, setPosition] = useState(employee?.position || "");
@@ -29,8 +29,8 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 
 	const handleSave = async () => {
 		const newEmployee: Omit<Employee, "id"> = {
-			first_name: firstName,
-			last_name: lastName,
+			firstName: firstName,
+			lastName: lastName,
 			email,
 			role,
 			position,

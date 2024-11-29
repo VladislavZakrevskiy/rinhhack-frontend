@@ -27,5 +27,8 @@
   "create": "Создать",
   "delete selected": "Удалить выделенное",
   "success": "Успешно!",
-  "operation was did successful": "Операция выполена успешно"
+  "operation was did successful": "Операция выполена успешно",
+  "Hello": "Здравствуйте",
+  "error fetch excel": "Ошибка загрузки ваших таблиц",
+  "no tables": "Нет таблиц"
 }

@@ -1,7 +1,7 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LazyMainPage } from "@/pages/MainPage";
 import {
-	AppRoutes,
+	AppRoutes, getExcelPage,
 	getRouteAdmin,
 	getRouteError,
 	getRouteLogin,
@@ -13,6 +13,7 @@ import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
 import { LazyTestPage } from "@/pages/TestPage";
 import { LazyErrorPage } from "@/pages/Error";
+import { LazyExcelPage } from "@/pages/ExcelPage";
 import { LazyAdminPage } from "@/pages/AdminPanel";
 import { UserRoles } from "@/entities/User";
 
@@ -38,6 +39,10 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.ERROR]: {
 		path: getRouteError(),
 		element: <LazyErrorPage />,
+	},
+	[AppRoutes.EXCELPAGE]: {
+		path: getExcelPage(),
+		element: <LazyExcelPage />,
 	},
 	[AppRoutes.ADMIN]: {
 		path: getRouteAdmin(),

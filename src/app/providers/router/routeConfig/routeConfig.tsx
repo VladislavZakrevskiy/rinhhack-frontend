@@ -9,10 +9,12 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
 		path: getRouteMain(),
 		element: <LazyMainPage />,
+		authOnly: true,
 	},
 	[AppRoutes.NOT_FOUND]: {
 		path: getRouteNotFound(),
 		element: <NotFoundPage />,
+		authOnly: true,
 	},
 	[AppRoutes.LOGIN]: {
 		path: getRouteLogin(),

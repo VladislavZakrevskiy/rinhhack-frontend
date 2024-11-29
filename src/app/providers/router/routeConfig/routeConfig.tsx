@@ -1,7 +1,8 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LazyMainPage } from "@/pages/MainPage";
 import {
-	AppRoutes, getExcelPage,
+	AppRoutes,
+	getExcelPage,
 	getRouteAdmin,
 	getRouteError,
 	getRouteLogin,
@@ -42,9 +43,8 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 		element: <LazyErrorPage />,
 	},
 	[AppRoutes.EXCELPAGE]: {
-		path: getExcelPage(),
+		path: getExcelPage(":id"),
 		element: <LazyExcelPage />,
-		authOnly: false
 	},
 	[AppRoutes.ADMIN]: {
 		path: getRouteAdmin(),

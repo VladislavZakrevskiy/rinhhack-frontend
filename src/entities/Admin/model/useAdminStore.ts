@@ -1,4 +1,5 @@
 import { Employee } from "@/shared/types/Employee";
+import { ExcelFile } from "@/shared/types/ExcelFile";
 import { v4 } from "uuid";
 import { create } from "zustand";
 
@@ -7,7 +8,7 @@ export type PageType = "Новая вкладка" | "Пользователи" 
 interface Page {
 	id: string;
 	type: PageType;
-	data: null | Employee[];
+	data: null | Employee[] | ExcelFile[];
 }
 
 interface State {

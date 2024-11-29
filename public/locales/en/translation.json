@@ -18,5 +18,10 @@
   "department": "Department",
   "error fetch users": "Error of fetching users",
   "error system": "Sorry, System Error",
-  "actions": "Actions"
+  "actions": "Actions",
+  "creator": "Creator",
+  "lastModified": "Last Modified",
+  "url": "URL",
+  "name": "Name",
+  "site url": "URL (web)"
 }

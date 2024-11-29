@@ -42,9 +42,8 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 		element: <LazyErrorPage />,
 	},
 	[AppRoutes.EXCELPAGE]: {
-		path: getExcelPage(),
+		path: getExcelPage(":id"),
 		element: <LazyExcelPage />,
-		authOnly: false
 	},
 	[AppRoutes.ADMIN]: {
 		path: getRouteAdmin(),

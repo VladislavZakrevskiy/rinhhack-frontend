@@ -209,7 +209,7 @@ export const TableDataTable: FC<DataTableProps> = () => {
 										<TableCellLayout>{item.url}</TableCellLayout>
 									</TableCell>
 									<TableCell>
-										<a onClick={() => nav}>{item.url}</a>
+										<a onClick={() => nav()}>{item.url}</a>
 									</TableCell>
 									<TableCell>
 										<TableCellLayout

@@ -1,17 +1,17 @@
+import { useUserStore } from "@/entities/User";
 import { Header } from "@/widgets/Header/ui/Header";
-import { memo, useState } from "react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 
 const MainPage = memo(() => {
-	const { t } = useTranslation("main");
+	const { isAuthenticated, user } = useUserStore();
+	const { t } = useTranslation();
 
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [userId, setUserId] = useState<string | undefined>(undefined);
 	return (
 		<>
-			<Header isAuthenticated={isAuthenticated} userId={userId} />
+			<Header isAuthenticated={isAuthenticated} userId={user?.id} />
 		</>
-	)
+	);
 });
 
 export default MainPage;

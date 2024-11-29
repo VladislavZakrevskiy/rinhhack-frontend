@@ -54,7 +54,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 			case "create":
 			case "update":
 				return (
-					<>
+					<div className="p-3">
 						<TextField
 							label="First Name"
 							value={firstName}
@@ -95,7 +95,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 							]}
 							onChange={(e, option) => setRole(option?.key as UserRoles)}
 						/>
-					</>
+					</div>
 				);
 			case "delete":
 				return null;
@@ -136,10 +136,8 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 				subText: mode === "delete" ? "This action cannot be undone." : undefined,
 			}}
 		>
-			<div className="w-[60%]">
-				{renderContent()}
-				<DialogFooter>{renderActions()}</DialogFooter>
-			</div>
+			{renderContent()}
+			<DialogFooter>{renderActions()}</DialogFooter>
 		</Dialog>
 	);
 };

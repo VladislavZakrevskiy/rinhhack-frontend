@@ -81,7 +81,7 @@ export const UserDataTable: FC<DataTableProps> = () => {
 		selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected },
 		getRows,
 		sort: { getSortDirection, sort, toggleColumnSort },
-	} = useTableFeatures({ columns: tableColumns, items: currentPage?.data ? currentPage.data : [] }, [
+	} = useTableFeatures({ columns: tableColumns, items: currentPage?.data ? (currentPage.data as Employee[]) : [] }, [
 		useTableSort({
 			defaultSortState: { sortColumn: "first_name", sortDirection: "ascending" },
 		}),

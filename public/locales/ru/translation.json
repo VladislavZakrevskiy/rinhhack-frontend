@@ -18,5 +18,10 @@
   "department": "Отдел",
   "error fetch users": "Ошибка загрузки пользователей",
   "error system": "Системная ошибка простите!",
-  "actions": "Действия"
+  "actions": "Действия",
+  "creator": "Создатель",
+  "lastModified": "Изменено",
+  "url": "URL",
+  "name": "Название",
+  "site url": "URL (веб)"
 }

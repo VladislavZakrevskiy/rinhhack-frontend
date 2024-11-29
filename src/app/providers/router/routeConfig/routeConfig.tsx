@@ -1,7 +1,8 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LazyMainPage } from "@/pages/MainPage";
 import {
-	AppRoutes, getExcelPage,
+	AppRoutes,
+	getExcelPage,
 	getRouteAdmin,
 	getRouteError,
 	getRouteLogin,

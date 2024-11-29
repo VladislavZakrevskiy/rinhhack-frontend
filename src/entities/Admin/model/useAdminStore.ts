@@ -1,4 +1,4 @@
-import { User } from "@/entities/User";
+import { Employee } from "@/shared/types/Employee";
 import { v4 } from "uuid";
 import { create } from "zustand";
 
@@ -7,7 +7,7 @@ export type PageType = "Новая вкладка" | "Пользователи" 
 interface Page {
 	id: string;
 	type: PageType;
-	data: null | User[];
+	data: null | Employee[];
 }
 
 interface State {
@@ -16,7 +16,8 @@ interface State {
 	currentPageId: string | null;
 	addPage: (type: PageType, id?: string) => void;
 	setCurrentPage: (pageId: string) => void;
-	setData: <T extends User>(pageId: string, data: T[]) => void;
+	removePage: (pageId: string) => void;
+	setData: <T extends Employee>(pageId: string, data: T[]) => void;
 }
 
 export const useAdminStore = create<State>((set, get) => ({
@@ -41,6 +42,8 @@ export const useAdminStore = create<State>((set, get) => ({
 			currentPageId: newPage.id,
 		});
 	},
+
+	removePage: (pageId) => set((store) => ({ pages: store.pages.filter((page) => page.id !== pageId) })),
 
 	setCurrentPage: (pageId) =>
 		set((store) => ({ currentPageId: pageId, currentPage: store.pages.find(({ id }) => id === pageId) })),

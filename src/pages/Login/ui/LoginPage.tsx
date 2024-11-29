@@ -1,5 +1,5 @@
-import { useUserStore } from "@/entities/User";
-import { getRouteMain } from "@/shared/consts/router";
+import { UserRoles, useUserStore } from "@/entities/User";
+import { getRouteAdmin, getRouteMain } from "@/shared/consts/router";
 import {
 	Button,
 	Card,
@@ -23,7 +23,7 @@ const LoginPage = () => {
 
 	const { t } = useTranslation();
 	const [authData, setAuthData] = useState({
-		email: "",
+		username: "",
 		password: "",
 	});
 	const nav = useNavigate();
@@ -43,7 +43,11 @@ const LoginPage = () => {
 		const user = await login(authData);
 		setIsLoading(false);
 		if (user) {
-			nav(getRouteMain());
+			if (user.employee.role === UserRoles.ADMIN) {
+				nav(getRouteAdmin());
+			} else {
+				nav(getRouteMain());
+			}
 		} else {
 			notify();
 			setIsError(false);
@@ -52,6 +56,8 @@ const LoginPage = () => {
 
 	return (
 		<>
+			{/* // TODO */}
+			Login: johndoe password_test Login: mariawhite password_test
 			<Toaster toasterId={toasterId} />
 			<div className="flex justify-center items-center w-full h-screen">
 				<Card className="flex flex-col gap-2 justify-center p-2 w-[40%]">
@@ -59,8 +65,8 @@ const LoginPage = () => {
 					<Input
 						type="email"
 						placeholder="email"
-						value={authData.email}
-						onChange={(e) => setAuthData((prev) => ({ ...prev, email: e.target.value }))}
+						value={authData.username}
+						onChange={(e) => setAuthData((prev) => ({ ...prev, username: e.target.value }))}
 					/>
 					<Input
 						type="password"

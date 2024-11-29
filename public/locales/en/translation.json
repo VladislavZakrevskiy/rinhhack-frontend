@@ -8,5 +8,15 @@
   "reload": "Reload",
   "wrong email": "Wrong email or password",
   "users": "Users",
-  "tables": "Tables"
+  "tables": "Tables",
+  "new page": "New page",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "email": "Эл. почта",
+  "role": "Role",
+  "position": "Position",
+  "department": "Department",
+  "error fetch users": "Error of fetching users",
+  "error system": "Sorry, System Error",
+  "actions": "Actions"
 }

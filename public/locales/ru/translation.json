@@ -8,5 +8,15 @@
   "reload": "Обновить",
   "wrong email": "Неправильный email или пароль",
   "users": "Пользователи",
-  "tables": "Таблицы"
+  "tables": "Таблицы",
+  "new page": "Новая вкладка",
+  "firstName": "Имя",
+  "lastName": "Фамилия",
+  "email": "Email",
+  "role": "Роль",
+  "position": "Должность",
+  "department": "Отдел",
+  "error fetch users": "Ошибка загрузки пользователей",
+  "error system": "Системная ошибка простите!",
+  "actions": "Действия"
 }

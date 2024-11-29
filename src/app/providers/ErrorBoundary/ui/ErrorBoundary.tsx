@@ -1,10 +1,10 @@
 import { getRouteMain } from "@/shared/consts/router";
 import { Button, Card, Text, Title3 } from "@fluentui/react-components";
 import React, { Component, ReactNode } from "react";
-import { WithTranslation, withTranslation } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
-class ErrorBoundary extends Component<{ children: ReactNode } & WithTranslation, { hasError: boolean }> {
-	constructor(props: { children: ReactNode } & WithTranslation) {
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+	constructor(props: { children: ReactNode }) {
 		super(props);
 		this.state = { hasError: false };
 	}

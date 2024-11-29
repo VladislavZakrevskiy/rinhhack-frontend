@@ -1,17 +1,25 @@
 import { AdminTabs, DataTable, PageType, useAdminStore } from "@/entities/Admin";
 import { Button, Card } from "@fluentui/react-components";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 } from "uuid";
 
 const MainScreen = () => {
 	const { t } = useTranslation();
-	const { currentPage, addPage, setCurrentPage } = useAdminStore();
+	const { currentPage, addPage, setCurrentPage, removePage } = useAdminStore();
 
 	const handleTypeSelect = (type: PageType) => {
 		const newPageId = v4();
 		addPage(type, newPageId);
+		removePage(currentPage!.id);
 		setCurrentPage(newPageId);
 	};
+
+	useEffect(() => {
+		const id = v4();
+		addPage("Новая вкладка", id);
+		setCurrentPage(id);
+	}, []);
 
 	return (
 		<div>
@@ -30,7 +38,9 @@ const MainScreen = () => {
 					</Card>
 				</div>
 			) : (
-				<DataTable />
+				<div className="p-3">
+					<DataTable />
+				</div>
 			)}
 		</div>
 	);

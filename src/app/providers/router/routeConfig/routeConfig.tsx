@@ -14,6 +14,7 @@ import { LazyLoginPage } from "@/pages/Login";
 import { LazyTestPage } from "@/pages/TestPage";
 import { LazyErrorPage } from "@/pages/Error";
 import { LazyAdminPage } from "@/pages/AdminPanel";
+import { UserRoles } from "@/entities/User";
 
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
@@ -40,6 +41,8 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	},
 	[AppRoutes.ADMIN]: {
 		path: getRouteAdmin(),
+		authOnly: true,
 		element: <LazyAdminPage />,
+		roles: [UserRoles.ADMIN],
 	},
 };

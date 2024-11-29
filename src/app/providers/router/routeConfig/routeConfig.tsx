@@ -9,6 +9,7 @@ import {
 	getRouteMain,
 	getRouteTestPage,
 	getRouteNotFound,
+	getWorkspacePage,
 } from "@/shared/consts/router";
 import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
@@ -17,6 +18,7 @@ import { LazyErrorPage } from "@/pages/Error";
 import { LazyExcelPage } from "@/pages/ExcelPage";
 import { LazyAdminPage } from "@/pages/AdminPanel";
 import { UserRoles } from "@/entities/User";
+import { LazyWorkspacePage } from "@/pages/WorkpacesPage";
 
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
@@ -50,5 +52,10 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 		authOnly: true,
 		element: <LazyAdminPage />,
 		roles: [UserRoles.ADMIN],
+	},
+	[AppRoutes.WORKSPACEPAGE]: {
+		path: getWorkspacePage(),
+		authOnly: false,
+		element: <LazyWorkspacePage />,
 	},
 };

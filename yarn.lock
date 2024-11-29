@@ -492,7 +492,7 @@
 
 "@fluentui/react-components@^9.56.3":
   version "9.56.3"
-  resolved "https://registry.npmjs.org/@fluentui/react-components/-/react-components-9.56.3.tgz"
+  resolved "https://registry.yarnpkg.com/@fluentui/react-components/-/react-components-9.56.3.tgz#6226cb7735d7a2692a06f2ba40c00eb24af27b64"
   integrity sha512-Qgx3ixP9RSwoNYUBNjztqUYj6m8DosWbnsBNRkhA1n/h3iDujLhyWb1m4Q0OoQtjYxC/CWho0nppaDFevHFk8A==
   dependencies:
     "@fluentui/react-accordion" "^9.5.9"

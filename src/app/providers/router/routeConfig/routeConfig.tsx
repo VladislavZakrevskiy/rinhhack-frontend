@@ -9,6 +9,7 @@ import {
 	getRouteMain,
 	getRouteTestPage,
 	getRouteNotFound,
+	getWorkspacePage,
 } from "@/shared/consts/router";
 import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
@@ -53,7 +54,7 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 		roles: [UserRoles.ADMIN],
 	},
 	[AppRoutes.WORKSPACEPAGE]: {
-		path: getRouteAdmin(),
+		path: getWorkspacePage(),
 		authOnly: false,
 		element: <LazyWorkspacePage />,
 	},

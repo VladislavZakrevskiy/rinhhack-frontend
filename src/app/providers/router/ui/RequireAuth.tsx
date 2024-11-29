@@ -1,5 +1,4 @@
-import { UserRoles } from "@/entities/User";
-import useUserStore from "@/entities/User/model/slice/useUserSlice";
+import { UserRoles, useUserStore } from "@/entities/User";
 import { getRouteMain, getRouteNotFound } from "@/shared/consts/router";
 import { FC, ReactNode, useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";

@@ -1,5 +1,5 @@
 import { UserRoles, useUserStore } from "@/entities/User";
-import { getRouteMain, getRouteNotFound } from "@/shared/consts/router";
+import { getRouteLogin, getRouteNotFound } from "@/shared/consts/router";
 import { FC, ReactNode, useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
@@ -21,7 +21,7 @@ export const RequireAuth: FC<Props> = ({ children, roles }) => {
 	}, [roles, userRole]);
 
 	if (!isAuthenticated) {
-		return <Navigate to={getRouteMain()} state={{ from: location }} replace />;
+		return <Navigate to={getRouteLogin()} state={{ from: location }} replace />;
 	}
 
 	if (!hasRequiredRoles) {

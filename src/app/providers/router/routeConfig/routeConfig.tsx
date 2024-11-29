@@ -1,25 +1,27 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LazyMainPage } from "@/pages/MainPage";
-import { AppRoutes, getRouteLogin, getRouteMain, getRouteNotFound, getRouteRegister } from "@/shared/consts/router";
+import { AppRoutes, getRouteError, getRouteLogin, getRouteMain, getRouteNotFound } from "@/shared/consts/router";
 import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
-import { LazyRegisterPage } from "@/pages/Register";
+import { LazyErrorPage } from "@/pages/Error";
 
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
 		path: getRouteMain(),
 		element: <LazyMainPage />,
+		authOnly: true,
 	},
 	[AppRoutes.NOT_FOUND]: {
 		path: getRouteNotFound(),
 		element: <NotFoundPage />,
+		authOnly: true,
 	},
 	[AppRoutes.LOGIN]: {
 		path: getRouteLogin(),
 		element: <LazyLoginPage />,
 	},
-	[AppRoutes.REGISTER]: {
-		path: getRouteRegister(),
-		element: <LazyRegisterPage />,
+	[AppRoutes.ERROR]: {
+		path: getRouteError(),
+		element: <LazyErrorPage />,
 	},
 };

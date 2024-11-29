@@ -1,23 +1,28 @@
 import { memo, useCallback } from "react";
-import LightIcon from "@/shared/assets/icons/theme-light.svg";
-import DarkIcon from "@/shared/assets/icons/theme-dark.svg";
-import { useUIActions } from "@/features/UI";
-import { useAppSelector } from "@/shared/lib/hooks";
-import { Themes } from "@/app/styles";
+import { useSystemStore } from "@/entities/System";
+import { System20Filled, WeatherMoon20Filled, WeatherSunny20Filled } from "@fluentui/react-icons";
+import { Button } from "@fluentui/react-components";
 
 export const ThemeSwitcher = memo(() => {
-	const { toggleTheme } = useUIActions();
-	const { type } = useAppSelector((state) => state.ui.themeStyles);
+	const { setTheme, theme } = useSystemStore();
 
 	const onToggle = useCallback(() => {
-		toggleTheme();
-	}, []);
+		switch (theme) {
+			case "dark":
+				setTheme("light");
+				break;
+			case "light":
+				setTheme("system");
+				break;
+			case "system":
+				setTheme("dark");
+				break;
+		}
+	}, [theme, setTheme]);
 
 	return (
-		<button onClick={onToggle}>
-			{/* <Button onClick={onToggle}> */}
-			{type === Themes.dark ? <DarkIcon /> : <LightIcon />}
-			{/* </Button> */}
-		</button>
+		<Button onClick={onToggle}>
+			{theme === "light" ? <WeatherSunny20Filled /> : theme === "dark" ? <WeatherMoon20Filled /> : <System20Filled />}
+		</Button>
 	);
 });

@@ -1,25 +1,21 @@
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { AppRouter } from "./providers/router";
 import { PageLoader } from "@/widgets/PageLoader";
-import { GlobalStyles } from "./styles/globalStyles";
-import { useGetMeQuery } from "@/entities/User/api/userApi";
-import { useUserActions } from "@/entities/User";
+import "./index.css";
 
 const App = () => {
-	const { data: user, isLoading } = useGetMeQuery(undefined);
-	const { setAuthData } = useUserActions();
+	// const { data: user, isLoading } = useGetMeQuery(undefined);
 
-	useEffect(() => {
-		if (user) setAuthData(user);
-	}, [user]);
+	// useEffect(() => {
+	// 	if (user) setAuthData(user);
+	// }, [user]);
 
-	if (isLoading) {
-		return <PageLoader />;
-	}
+	// if (isLoading) {
+	// 	return <PageLoader />;
+	// }
 
 	return (
 		<div>
-			<GlobalStyles />
 			<Suspense fallback={<PageLoader />}>
 				{/* <Navbar /> */}
 				<div className="content-page">

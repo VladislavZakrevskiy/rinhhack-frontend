@@ -1,6 +1,6 @@
 import { UserRoles } from "@/entities/User";
+import useUserStore from "@/entities/User/model/slice/useUserSlice";
 import { getRouteMain, getRouteNotFound } from "@/shared/consts/router";
-import { useAppSelector } from "@/shared/lib/hooks";
 import { FC, ReactNode, useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
@@ -10,18 +10,18 @@ interface Props {
 }
 
 export const RequireAuth: FC<Props> = ({ children, roles }) => {
-	const auth = useAppSelector((state) => state.user.authData);
+	const { user, isAuthenticated } = useUserStore();
 	const location = useLocation();
-	const userRoles = auth?.roles;
+	const userRole = user?.role;
 
 	const hasRequiredRoles = useMemo(() => {
 		if (!roles) {
 			return true;
 		}
-		return roles.some((requireRole) => userRoles?.includes(requireRole));
-	}, [roles, userRoles]);
+		return roles.some((requireRole) => userRole === requireRole);
+	}, [roles, userRole]);
 
-	if (!auth) {
+	if (!isAuthenticated) {
 		return <Navigate to={getRouteMain()} state={{ from: location }} replace />;
 	}
 

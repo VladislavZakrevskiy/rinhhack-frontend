@@ -3,11 +3,13 @@ export enum AppRoutes {
 	NOT_FOUND = "not_found",
 	LOGIN = "login",
 	ERROR = 'error',
-	ADMIN = 'admin'
+	ADMIN = 'admin',
+	TESTPAGE ="testpage",
 }
 
 export const getRouteMain = () => "/";
 export const getRouteLogin = () => "/login";
 export const getRouteNotFound = () => "*";
-export const getRouteError = () => "/error"
 export const getRouteAdmin = () => "/admin"
+export const getRouteTestPage = () => "/testpage"; 
+export const getRouteError = () => "/error"

@@ -6,10 +6,12 @@ import {
 	getRouteError,
 	getRouteLogin,
 	getRouteMain,
+	getRouteTestPage,
 	getRouteNotFound,
 } from "@/shared/consts/router";
 import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
+import { LazyTestPage } from "@/pages/TestPage";
 import { LazyErrorPage } from "@/pages/Error";
 import { LazyAdminPage } from "@/pages/AdminPanel";
 
@@ -27,6 +29,10 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.LOGIN]: {
 		path: getRouteLogin(),
 		element: <LazyLoginPage />,
+	},
+	[AppRoutes.TESTPAGE]: {
+		path: getRouteTestPage(),
+		element: <LazyTestPage />,
 	},
 	[AppRoutes.ERROR]: {
 		path: getRouteError(),

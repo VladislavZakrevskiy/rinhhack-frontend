@@ -1,9 +1,17 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LazyMainPage } from "@/pages/MainPage";
-import { AppRoutes, getRouteError, getRouteLogin, getRouteMain, getRouteNotFound } from "@/shared/consts/router";
+import {
+	AppRoutes,
+	getRouteAdmin,
+	getRouteError,
+	getRouteLogin,
+	getRouteMain,
+	getRouteNotFound,
+} from "@/shared/consts/router";
 import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
 import { LazyErrorPage } from "@/pages/Error";
+import { LazyAdminPage } from "@/pages/AdminPanel";
 
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
@@ -23,5 +31,9 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.ERROR]: {
 		path: getRouteError(),
 		element: <LazyErrorPage />,
+	},
+	[AppRoutes.ADMIN]: {
+		path: getRouteAdmin(),
+		element: <LazyAdminPage />,
 	},
 };

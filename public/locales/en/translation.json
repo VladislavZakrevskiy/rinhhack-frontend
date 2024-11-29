@@ -6,5 +6,7 @@
   "please reload error": "Please, try to back or go to home",
   "sorry error": "Sorry, it's is our error",
   "reload": "Reload",
-  "wrong email": "Wrong email or password"
+  "wrong email": "Wrong email or password",
+  "users": "Users",
+  "tables": "Tables"
 }

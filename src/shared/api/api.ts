@@ -2,7 +2,7 @@ import axios from "axios";
 import { USER_ACCESS_TOKEN } from "@/shared/consts/localStorage";
 
 export const $api = axios.create({
-	baseURL: __API__,
+	baseURL: import.meta.env.API_URL,
 	headers: {
 		authorization: localStorage.getItem(USER_ACCESS_TOKEN) || "",
 	},

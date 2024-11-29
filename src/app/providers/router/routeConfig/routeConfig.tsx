@@ -1,11 +1,20 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LazyMainPage } from "@/pages/MainPage";
-import { AppRoutes, getExcelPage, getRouteError, getRouteLogin, getRouteMain, getRouteNotFound, getRouteTestPage } from "@/shared/consts/router";
+import {
+	AppRoutes, getExcelPage,
+	getRouteAdmin,
+	getRouteError,
+	getRouteLogin,
+	getRouteMain,
+	getRouteTestPage,
+	getRouteNotFound,
+} from "@/shared/consts/router";
 import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
 import { LazyTestPage } from "@/pages/TestPage";
 import { LazyErrorPage } from "@/pages/Error";
 import { LazyExcelPage } from "@/pages/ExcelPage";
+import { LazyAdminPage } from "@/pages/AdminPanel";
 
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
@@ -24,7 +33,7 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	},
 	[AppRoutes.TESTPAGE]: {
 		path: getRouteTestPage(),
-		element: <LazyTestPage/>,
+		element: <LazyTestPage />,
 	},
 	[AppRoutes.ERROR]: {
 		path: getRouteError(),
@@ -33,5 +42,9 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.EXCELPAGE]: {
 		path: getExcelPage(),
 		element: <LazyExcelPage />,
+	},
+	[AppRoutes.ADMIN]: {
+		path: getRouteAdmin(),
+		element: <LazyAdminPage />,
 	},
 };

@@ -20,7 +20,6 @@ const ExcelPage: React.FC = () => {
   useEffect(() => {
     const socketConnection = io("http://pepper-coding.online", {
       transports: ["websocket"],
-      query: { token: "your-token-here" },
     });
     setSocket(socketConnection);
 
@@ -32,18 +31,21 @@ const ExcelPage: React.FC = () => {
     socketConnection.on("file_update", (message: WebSocketMessage) => {
       if (message.data) {
         try {
-          console.log("Received base64 data:", message.data);
-          const decodedFile = decodeBase64ToFile(message.data);
-          if (decodedFile) {
-            console.log("File successfully decoded into Blob:", decodedFile);
+          console.log("Received data:", message.data);
 
-            const fileDownloadUrl = URL.createObjectURL(decodedFile);
-            setFileUrl(fileDownloadUrl);
-            console.log("File download URL:", fileDownloadUrl);
+          if (typeof message.data === "string") {
+            const decodedFile = decodeBase64ToArrayBuffer(message.data);
+            if (decodedFile) {
+              console.log("File successfully decoded into ArrayBuffer:", decodedFile);
 
-            readExcelFile(decodedFile);
-          } else {
-            console.error("Error: file could not be saved.");
+              const fileDownloadUrl = URL.createObjectURL(new Blob([decodedFile], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
+              setFileUrl(fileDownloadUrl);
+              console.log("File download URL:", fileDownloadUrl);
+
+              readExcelFile(decodedFile);
+            } else {
+              console.error("Error: file could not be decoded.");
+            }
           }
         } catch (error) {
           console.error("Error decoding file:", error);
@@ -68,14 +70,18 @@ const ExcelPage: React.FC = () => {
       return;
     }
 
+    console.log("New data after cell edit:", newData);
+
     setData(newData);
 
     if (socket) {
       try {
-        const encodedData = encodeMatrixToBase64(newData);
+        const arrayBufferData = encodeMatrixToArrayBuffer(newData);
+        console.log("Encoded data ready for transmission:", arrayBufferData);
+
         socket.emit("file_update", {
           action: "file_update",
-          data: encodedData,
+          data: arrayBufferData,
         });
       } catch (error) {
         console.error("Error encoding data:", error);
@@ -83,11 +89,9 @@ const ExcelPage: React.FC = () => {
     }
   };
 
-  const readExcelFile = async (file: Blob) => {
+  const readExcelFile = async (arrayBuffer: ArrayBuffer) => {
     try {
-      const arrayBuffer = await file.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: true });
-
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       if (!worksheet) {
         console.error("No sheet found in workbook.");
@@ -129,32 +133,29 @@ const ExcelPage: React.FC = () => {
 
 export default ExcelPage;
 
-function decodeBase64ToFile(base64: string): Blob | null {
+function decodeBase64ToArrayBuffer(base64: string): ArrayBuffer | null {
   try {
-    const cleanedBase64 = cleanBase64(base64);
-    console.log("Cleaned base64 data:", cleanedBase64);
-    const decodedData = atob(cleanedBase64);
+    const binaryString = atob(base64);
+    const length = binaryString.length;
+    const arrayBuffer = new ArrayBuffer(length);
+    const uint8Array = new Uint8Array(arrayBuffer);
 
-    const byteArray = new Uint8Array(decodedData.length);
-    for (let i = 0; i < decodedData.length; i++) {
-      byteArray[i] = decodedData.charCodeAt(i);
+    for (let i = 0; i < length; i++) {
+      uint8Array[i] = binaryString.charCodeAt(i);
     }
 
-    return new Blob([byteArray], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    return arrayBuffer;
   } catch (error) {
-    console.error("Ошибка при декодировании Base64 в файл:", error);
+    console.error("Ошибка при декодировании Base64 в ArrayBuffer:", error);
     return null;
   }
 }
 
-function cleanBase64(base64: string): string {
-  return base64.replace(/[\s\n\r]+/g, "");
-}
-
-function encodeMatrixToBase64(matrix: SpreadsheetData): string {
+function encodeMatrixToArrayBuffer(matrix: SpreadsheetData): ArrayBuffer {
   const stringData = matrix
     .map((row) => row.map((cell) => (cell ? cell.value : "")).join("\t"))
     .join("\n");
 
-  return btoa(unescape(encodeURIComponent(stringData)));
+  const textEncoder = new TextEncoder();
+  return textEncoder.encode(stringData).buffer;
 }

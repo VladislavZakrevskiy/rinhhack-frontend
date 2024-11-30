@@ -71,11 +71,15 @@ const ExcelPage: React.FC = () => {
     setData(newData);
 
     if (socket) {
-      const encodedData = encodeMatrixToBase64(newData);
-      socket.emit("file_update", {
-        action: "file_update",
-        data: encodedData,
-      });
+      try {
+        const encodedData = encodeMatrixToBase64(newData);
+        socket.emit("file_update", {
+          action: "file_update",
+          data: encodedData,
+        });
+      } catch (error) {
+        console.error("Error encoding data:", error);
+      }
     }
   };
 
@@ -151,5 +155,6 @@ function encodeMatrixToBase64(matrix: SpreadsheetData): string {
   const stringData = matrix
     .map((row) => row.map((cell) => (cell ? cell.value : "")).join("\t"))
     .join("\n");
-  return btoa(stringData);
+
+  return btoa(unescape(encodeURIComponent(stringData)));
 }

@@ -2,7 +2,7 @@ import { useSystemStore } from "@/entities/System";
 import { Button } from "@fluentui/react-components";
 import React, { Dispatch, FC, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
+import Spreadsheet, { CellBase, createFormulaParser, Matrix } from "react-spreadsheet";
 
 type SpreadsheetData = Matrix<CellBase>;
 
@@ -31,6 +31,16 @@ function getSize(matrix: Matrix<unknown>) {
 export const ExcelTable: FC<ExcelTableProps> = ({ data, handleCellChange, setData }) => {
 	const { theme } = useSystemStore();
 	const { t } = useTranslation();
+
+	const customFormulaParser = (data: SpreadsheetData) => {
+		return createFormulaParser(data, {
+			functions: {
+				SUMMA: (a: { value: number }, b: { value: number }) => {
+					return a.value + b.value;
+				},
+			},
+		});
+	};
 
 	const addColumn = React.useCallback(
 		() =>
@@ -75,7 +85,12 @@ export const ExcelTable: FC<ExcelTableProps> = ({ data, handleCellChange, setDat
 				<Button onClick={addRow}>{t("add row")}</Button>
 				<Button onClick={removeRow}>{t("remove row")}</Button>
 			</div>
-			<Spreadsheet darkMode={theme === "dark"} data={data} onChange={handleCellChange} />
+			<Spreadsheet
+				createFormulaParser={customFormulaParser}
+				darkMode={theme === "dark"}
+				data={data}
+				onChange={handleCellChange}
+			/>
 		</div>
 	);
 };

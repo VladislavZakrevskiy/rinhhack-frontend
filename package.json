@@ -18,6 +18,7 @@
 		"@syncfusion/ej2-react-spreadsheet": "^27.2.3",
 		"axios": "^1.6.8",
 		"exceljs": "^4.4.0",
+		"fast-formula-parser": "^1.0.19",
 		"file-saver": "^2.0.5",
 		"handsontable": "^14.6.1",
 		"i18next": "^23.10.1",

@@ -13,7 +13,7 @@ export const AppProvider: FC<AppProviderProps> = ({ children }) => {
 
 	return (
 		<ErrorBoundary>
-			<FluentProvider theme={theme === "dark" ? webDarkTheme : webLightTheme}>
+			<FluentProvider style={{ minHeight: "100vh" }} theme={theme === "dark" ? webDarkTheme : webLightTheme}>
 				<BrowserRouter>{children}</BrowserRouter>
 			</FluentProvider>
 		</ErrorBoundary>

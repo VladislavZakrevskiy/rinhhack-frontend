@@ -35,15 +35,15 @@ interface DataTableProps {}
 
 const tableColumns: TableColumnDefinition<Employee>[] = [
 	createTableColumn<Employee>({
-		columnId: "firstName",
+		columnId: "first_name",
 		compare: (a, b) => {
-			return a.firstName.localeCompare(b.firstName);
+			return a.first_name.localeCompare(b.first_name);
 		},
 	}),
 	createTableColumn<Employee>({
-		columnId: "lastName",
+		columnId: "last_name",
 		compare: (a, b) => {
-			return a.lastName.localeCompare(b.lastName);
+			return a.last_name.localeCompare(b.last_name);
 		},
 	}),
 	createTableColumn<Employee>({
@@ -84,7 +84,7 @@ export const UserDataTable: FC<DataTableProps> = () => {
 		sort: { getSortDirection, sort, toggleColumnSort },
 	} = useTableFeatures({ columns: tableColumns, items: currentPage?.data ? (currentPage.data as Employee[]) : [] }, [
 		useTableSort({
-			defaultSortState: { sortColumn: "firstName", sortDirection: "ascending" },
+			defaultSortState: { sortColumn: "first_name", sortDirection: "ascending" },
 		}),
 		useTableSelection({
 			selectionMode: "multiselect",
@@ -214,9 +214,9 @@ export const UserDataTable: FC<DataTableProps> = () => {
 						openModal("create", {
 							department: "",
 							email: "",
-							firstName: "",
+							first_name: "",
 							id: "",
-							lastName: "",
+							last_name: "",
 							position: "",
 							role: UserRoles.USER,
 						})
@@ -239,8 +239,8 @@ export const UserDataTable: FC<DataTableProps> = () => {
 							checkboxIndicator={{ "aria-label": "Select all rows " }}
 						/>
 
-						<TableHeaderCell {...headerSortProps("firstName")}>{t("firstName")}</TableHeaderCell>
-						<TableHeaderCell {...headerSortProps("lastName")}>{t("lastName")}</TableHeaderCell>
+						<TableHeaderCell {...headerSortProps("first_name")}>{t("first_name")}</TableHeaderCell>
+						<TableHeaderCell {...headerSortProps("last_name")}>{t("last_name")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("email")}>{t("email")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("role")}>{t("role")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("position")}>{t("position")}</TableHeaderCell>
@@ -258,17 +258,17 @@ export const UserDataTable: FC<DataTableProps> = () => {
 										<TableCellLayout
 											media={
 												<Avatar
-													aria-label={item.firstName}
-													name={item.firstName + " " + item.lastName}
+													aria-label={item.first_name}
+													name={item.first_name + " " + item.last_name}
 													badge={{ status: "available" }}
 												/>
 											}
 										>
-											{item.firstName}
+											{item.first_name}
 										</TableCellLayout>
 									</TableCell>
 									<TableCell>
-										<TableCellLayout>{item.lastName}</TableCellLayout>
+										<TableCellLayout>{item.last_name}</TableCellLayout>
 									</TableCell>
 									<TableCell>
 										<TableCellLayout>{item.email}</TableCellLayout>

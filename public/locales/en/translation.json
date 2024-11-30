@@ -30,5 +30,8 @@
   "operation was did successful": "Opetion was did successful!",
   "Hello": "Welcome",
   "error fetch excel": "Error of fetching tables",
-  "no tables": "No Tables"
+  "no tables": "No Tables",
+  "error fetch user": "Error of fetching profile",
+  "lastModified excel": "Last Modified Table",
+  "no lastModified": "No last modified table"
 }

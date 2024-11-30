@@ -7,7 +7,8 @@ export enum AppRoutes {
 	TESTPAGE = "testpage",
 	EXCELPAGE = "excelpage",
 	TESTEXCELPAGE = "testexcelpage",
-	WORKSPACEPAGE = "workspace"
+	WORKSPACEPAGE = "workspace",
+	PROFILE = "profile",
 }
 
 export const getRouteMain = () => "/";
@@ -16,6 +17,7 @@ export const getRouteNotFound = () => "*";
 export const getRouteAdmin = () => "/admin";
 export const getRouteTestPage = () => "/testpage";
 export const getRouteError = () => "/error";
-export const getExcelPage = () => "/excel";
+export const getExcelPage = (id: string) => "/excel/" + id;
 export const getTestExcelPage = () => "/testexcel";
-export const getWorkspacePage = () => "/workspace";
+export const getWorkspacePage = (id: string) => "/workspace/" + id;
+export const getProfilePage = (id: string) => "/profile/" + id;

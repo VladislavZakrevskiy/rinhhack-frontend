@@ -30,7 +30,7 @@ const MainPage = memo(() => {
 	const { dispatchToast } = useToastController(toasterId);
 
 	const nav = useNavigate();
-	const { isAuthenticated, user } = useUserStore();
+	const { user } = useUserStore();
 	const { t } = useTranslation();
 	const [isLoading, setIsLoading] = useState(false);
 	const [excels, setExcels] = useState<ExcelFile[]>([]);
@@ -78,8 +78,8 @@ const MainPage = memo(() => {
 
 	return (
 		<>
-			<Toaster toasterId="" />
-			<Header isAuthenticated={isAuthenticated} userId={user?.id} />
+			<Toaster toasterId={toasterId} />
+			<Header />
 			<div className="p-3">
 				<div className="flex justify-between">
 					<Title2>

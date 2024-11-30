@@ -30,5 +30,8 @@
   "operation was did successful": "Операция выполена успешно",
   "Hello": "Здравствуйте",
   "error fetch excel": "Ошибка загрузки ваших таблиц",
-  "no tables": "Нет таблиц"
+  "no tables": "Нет таблиц",
+  "error fetch user": "Ошибка загрузки профиля",
+  "lastModified excel": "Последняя таблица",
+  "no lastModified": "Нет последнего измененного файла"
 }

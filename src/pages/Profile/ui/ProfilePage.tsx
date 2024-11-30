@@ -1,7 +1,7 @@
 import {
 	Avatar,
+	Button,
 	Card,
-	CardHeader,
 	Skeleton,
 	SkeletonItem,
 	Subtitle2,
@@ -16,13 +16,16 @@ import {
 } from "@fluentui/react-components";
 import { useEffect, useState } from "react";
 import { $api } from "@/shared/api/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AxiosResponse } from "axios";
 import { Employee } from "@/shared/types/Employee";
 import { useTranslation } from "react-i18next";
 import { useUserStore } from "@/entities/User";
 import { ExcelFile } from "@/shared/types/ExcelFile";
 import { Header } from "@/widgets/Header/ui/Header";
+import { ArrowDownloadFilled } from "@fluentui/react-icons";
+import { getExcelPage } from "@/shared/consts/router";
+import { TableModal } from "@/entities/Admin/ui/Modals/Tables/TableModal";
 
 const ProfilePage = () => {
 	const toasterId = useId("toaster-profile");
@@ -36,6 +39,9 @@ const ProfilePage = () => {
 	const [currentUser, setCurrentUser] = useState<Employee & { firstName: string; lastName: string }>();
 	const [excels, setExcels] = useState<ExcelFile[]>([]);
 	const [lastExcel, setLastExcel] = useState<ExcelFile>();
+	const nav = useNavigate();
+	const [isOperationLoading, setIsOperationLoading] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
 
 	const notify = () =>
 		dispatchToast(
@@ -77,43 +83,47 @@ const ProfilePage = () => {
 		fetchMe();
 	}, [id]);
 
-	useEffect(() => {
-		const fetchLastExcel = async () => {
-			try {
-				setIsLastExcelLoading(true);
-				const res = await $api.get<void, AxiosResponse<ExcelFile>>("/excel/user");
-				if (res.data) {
-					setLastExcel(res.data);
-				} else {
-					notifyExcel();
-				}
-			} catch (e) {
-				console.log(e);
+	// useEffect(() => {
+	// 	const fetchLastExcel = async () => {
+	// 		try {
+	// 			setIsLastExcelLoading(true);
+	// 			const res = await $api.get<void, AxiosResponse<ExcelFile>>("/excel/files");
+	// 			if (res.data) {
+	// 				setLastExcel(res.data);
+	// 			} else {
+	// 				notifyExcel();
+	// 			}
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 			notifyExcel();
+	// 		} finally {
+	// 			setIsLastExcelLoading(false);
+	// 		}
+	// 	};
+	// 	fetchLastExcel();
+	// }, [id]);
+
+	const fetchExcels = async () => {
+		try {
+			setIsLastExcelLoading(true);
+			setIsExcelLoading(true);
+			const res = await $api.get<void, AxiosResponse<{ files: ExcelFile[] }>>("/excel/files");
+			if (res.data) {
+				setExcels(res.data.files);
+				setLastExcel(res.data.files[0] ? res.data.files[0] : undefined);
+			} else {
 				notifyExcel();
-			} finally {
-				setIsLastExcelLoading(false);
 			}
-		};
-		fetchLastExcel();
-	}, [id]);
+		} catch (e) {
+			console.log(e);
+			notifyExcel();
+		} finally {
+			setIsExcelLoading(false);
+			setIsLastExcelLoading(false);
+		}
+	};
 
 	useEffect(() => {
-		const fetchExcels = async () => {
-			try {
-				setIsExcelLoading(true);
-				const res = await $api.get<void, AxiosResponse<ExcelFile[]>>("/excel/user1");
-				if (res.data) {
-					setExcels(res.data);
-				} else {
-					notifyExcel();
-				}
-			} catch (e) {
-				console.log(e);
-				notifyExcel();
-			} finally {
-				setIsExcelLoading(false);
-			}
-		};
 		fetchExcels();
 	}, [id]);
 
@@ -122,6 +132,25 @@ const ProfilePage = () => {
 			<>
 				<Header />
 				<Toaster toasterId={toasterId} />
+				<TableModal
+					isOpen={isOpen}
+					isOperationLoading={isOperationLoading}
+					mode="create"
+					onClose={() => setIsOpen(false)}
+					onSave={async (saveData) => {
+						setIsOperationLoading(true);
+						try {
+							await $api.post("/excel/create", { filename: saveData.name });
+							fetchExcels();
+						} catch (e) {
+							console.log(e);
+							notify();
+						} finally {
+							setIsOperationLoading(false);
+						}
+					}}
+					table={{ download_link: "", id: "", last_modified: "", name: "", size: 0 }}
+				/>
 				<div className="grid grid-cols-2 gap-4 p-6">
 					<Card>
 						{isLoading ? (
@@ -174,7 +203,7 @@ const ProfilePage = () => {
 						)}
 					</Card>
 					<Card>
-						<Title3>{t("last_modified excel")}</Title3>
+						<Title3>{t("lastModified excel")}</Title3>
 						{isLastExcelLoading ? (
 							<>
 								<Skeleton aria-label="Loading Content">
@@ -183,24 +212,37 @@ const ProfilePage = () => {
 							</>
 						) : lastExcel ? (
 							<>
-								{/* <Subtitle2>{lastExcel?.name}</Subtitle2>
-								<div className="flex gap-2">
-									<Avatar
-										aria-label={lastExcel?.creator.firstName}
-										name={lastExcel?.creator.firstName + " " + lastExcel?.creator.lastName}
-										badge={{ status: "available" }}
+								<Title3>{lastExcel.name}</Title3>
+								<Text>
+									{t("size")}:{" "}
+									{lastExcel.size / 1024 > 1024
+										? `${(lastExcel.size / 1024 / 1024).toFixed(2)}МБ`
+										: `${(lastExcel.size / 1024).toFixed(2)}КБ`}
+								</Text>
+								<div className="flex">
+									<Button
+										as="a"
+										style={{ marginRight: 5 }}
+										href={lastExcel.download_link}
+										download={lastExcel.name}
+										icon={<ArrowDownloadFilled />}
+										aria-label="Download"
 									/>
-									<Text>
-										{lastExcel?.creator.firstName} {lastExcel?.creator.lastName}
-									</Text>
-								</div> */}
+									<Button className="flex-1" onClick={() => nav(getExcelPage(lastExcel.name))} aria-label="Go">
+										{t("go")}
+									</Button>
+								</div>
 							</>
 						) : (
-							<Subtitle2>{t("no last_modified")}</Subtitle2>
+							<Subtitle2>{t("no lastModified")}</Subtitle2>
 						)}
 					</Card>
 				</div>
 
+				<div className="flex justify-between px-6">
+					<Title3>{t("your tables")}</Title3>
+					<Button onClick={() => setIsOpen(true)}>{t("create")}</Button>
+				</div>
 				<div
 					className={
 						excels.length === 0 && !isExcelLoading
@@ -230,18 +272,25 @@ const ProfilePage = () => {
 					) : (
 						excels.map((excel) => (
 							<Card>
-								<CardHeader>
-									<Title3>{excel.name}</Title3>
-								</CardHeader>
-								<div className="flex gap-2">
-									<Avatar
-										aria-label={excel.creator.firstName}
-										name={excel.creator.firstName + " " + excel.creator.lastName}
-										badge={{ status: "available" }}
+								<Title3>{excel.name}</Title3>
+								<Text>
+									{t("size")}:{" "}
+									{excel.size / 1024 > 1024
+										? `${(excel.size / 1024 / 1024).toFixed(2)}МБ`
+										: `${(excel.size / 1024).toFixed(2)}КБ`}
+								</Text>
+								<div className="flex">
+									<Button
+										as="a"
+										style={{ marginRight: 5 }}
+										href={excel.download_link}
+										download={excel.name}
+										icon={<ArrowDownloadFilled />}
+										aria-label="Download"
 									/>
-									<Text>
-										{excel.creator.firstName} {excel.creator.lastName}
-									</Text>
+									<Button className="flex-1" onClick={() => nav(getExcelPage(excel.name))} aria-label="Go">
+										{t("go")}
+									</Button>
 								</div>
 							</Card>
 						))

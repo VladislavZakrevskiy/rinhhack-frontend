@@ -1,10 +1,8 @@
 import { useUserStore } from "@/entities/User";
 import { Header } from "@/widgets/Header/ui/Header";
 import {
-	Avatar,
 	Button,
 	Card,
-	CardHeader,
 	Skeleton,
 	SkeletonItem,
 	Text,
@@ -24,6 +22,8 @@ import { ExcelFile } from "@/shared/types/ExcelFile";
 import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import { getExcelPage } from "@/shared/consts/router";
+import { ArrowDownloadFilled } from "@fluentui/react-icons";
+import { TableModal } from "@/entities/Admin/ui/Modals/Tables/TableModal";
 
 const MainPage = memo(() => {
 	const toasterId = useId("toaster-mainpage");
@@ -34,18 +34,8 @@ const MainPage = memo(() => {
 	const { t } = useTranslation();
 	const [isLoading, setIsLoading] = useState(false);
 	const [excels, setExcels] = useState<ExcelFile[]>([]);
-
-	const createExcel = async () => {
-		try {
-			const res = await $api.post<{ name: string }, AxiosResponse<ExcelFile>>("/excel");
-			if (res.data) {
-				nav(getExcelPage(res.data.id));
-			}
-		} catch (e) {
-			notify();
-			console.log(e);
-		}
-	};
+	const [isOperationLoading, setIsOperationLoading] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
 
 	const notify = () =>
 		dispatchToast(
@@ -56,41 +46,59 @@ const MainPage = memo(() => {
 			{ intent: "error" },
 		);
 
-	useEffect(() => {
-		const fetchExcels = async () => {
-			try {
-				setIsLoading(true);
-				const res = await $api.get<void, AxiosResponse<ExcelFile[]>>("/excel/user1");
-				if (res.data) {
-					setExcels(res.data);
-				} else {
-					notify();
-				}
-			} catch (e) {
-				console.log(e);
+	const fetchExcels = async () => {
+		try {
+			setIsLoading(true);
+			const res = await $api.get<void, AxiosResponse<{ files: ExcelFile[] }>>("/excel/files");
+			if (res.data) {
+				setExcels(res.data.files);
+			} else {
 				notify();
-			} finally {
-				setIsLoading(false);
 			}
-		};
+		} catch (e) {
+			console.log(e);
+			notify();
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
 		fetchExcels();
 	}, []);
 
 	return (
 		<>
+			<TableModal
+				isOpen={isOpen}
+				isOperationLoading={isOperationLoading}
+				mode="create"
+				onClose={() => setIsOpen(false)}
+				onSave={async (saveData) => {
+					setIsOperationLoading(true);
+					try {
+						await $api.post("/excel/create", { filename: saveData.name });
+						fetchExcels();
+					} catch (e) {
+						console.log(e);
+						notify();
+					} finally {
+						setIsOperationLoading(false);
+					}
+				}}
+				table={{ download_link: "", id: "", last_modified: "", name: "", size: 0 }}
+			/>
 			<Toaster toasterId={toasterId} />
 			<Header />
-			<div className="p-3">
+			<div className="p-8">
 				<div className="flex justify-between">
 					<Title2>
 						{t("Hello")}, {user?.firstName} {user?.lastName}!
 					</Title2>
-					<Button onClick={createExcel}>{t("create")}</Button>
+					<Button onClick={() => setIsOpen(true)}>{t("create")}</Button>
 				</div>
 
-				<div
-					className={excels.length === 0 ? "flex justify-center items-center h-64" : "grid grid-cols-3 gap-3 p-2 pt-6"}
-				>
+				<div className={excels.length === 0 ? "flex justify-center items-center h-64" : "grid grid-cols-3 gap-3  pt-6"}>
 					{excels.length === 0 && <Title3>{t("no tables")}</Title3>}
 					{isLoading ? (
 						<>
@@ -113,18 +121,25 @@ const MainPage = memo(() => {
 					) : (
 						excels?.map((excel) => (
 							<Card>
-								<CardHeader>
-									<Title3>{excel.name}</Title3>
-								</CardHeader>
-								<div className="flex gap-2">
-									<Avatar
-										aria-label={excel.creator.firstName}
-										name={excel.creator.firstName + " " + excel.creator.lastName}
-										badge={{ status: "available" }}
+								<Title3>{excel.name}</Title3>
+								<Text>
+									{t("size")}:{" "}
+									{excel.size / 1024 > 1024
+										? `${(excel.size / 1024 / 1024).toFixed(2)}МБ`
+										: `${(excel.size / 1024).toFixed(2)}КБ`}
+								</Text>
+								<div className="flex">
+									<Button
+										as="a"
+										style={{ marginRight: 5 }}
+										href={excel.download_link}
+										download={excel.name}
+										icon={<ArrowDownloadFilled />}
+										aria-label="Download"
 									/>
-									<Text>
-										{excel.creator.firstName} {excel.creator.lastName}
-									</Text>
+									<Button className="flex-1" onClick={() => nav(getExcelPage(excel.name))} aria-label="Go">
+										{t("go")}
+									</Button>
 								</div>
 							</Card>
 						))

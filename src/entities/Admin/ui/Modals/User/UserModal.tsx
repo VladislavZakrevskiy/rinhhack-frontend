@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Employee } from "@/shared/types/Employee";
 import { UserRoles } from "@/entities/User";
-import {
-	ChoiceGroup,
-	DefaultButton,
-	Dialog,
-	DialogFooter,
-	DialogType,
-	PrimaryButton,
-	TextField,
-} from "@fluentui/react";
+import { ChoiceGroup, Dialog, DialogFooter, DialogType, TextField } from "@fluentui/react";
+import { Button, Spinner } from "@fluentui/react-components";
 
 interface EmployeeModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	onSave: (employee: Omit<Employee, "id">) => Promise<void>;
-	employee?: Employee; // Для редактирования сотрудника
-	mode: "create" | "update" | "delete"; // Режим: создать, обновить или удалить
+	employee?: Employee;
+	isOperationLoading: boolean;
+	mode: "create" | "update" | "delete";
 }
 
-const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, employee, mode }) => {
+const EmployeeModal: React.FC<EmployeeModalProps> = ({
+	isOpen,
+	onClose,
+	onSave,
+	employee,
+	mode,
+	isOperationLoading,
+}) => {
 	const [firstName, setFirstName] = useState(employee?.firstName || "");
 	const [lastName, setLastName] = useState(employee?.lastName || "");
 	const [email, setEmail] = useState(employee?.email || "");
@@ -140,15 +141,23 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 			case "update":
 				return (
 					<div className="flex gap-3">
-						<PrimaryButton text="Save" onClick={handleSave} />
-						<DefaultButton text="Cancel" onClick={onClose} />
+						<Button icon={isOperationLoading ? <Spinner size="tiny" /> : undefined} onClick={handleSave}>
+							Save
+						</Button>
+						<Button icon={isOperationLoading ? <Spinner size="tiny" /> : undefined} onClick={onClose}>
+							Cancel
+						</Button>
 					</div>
 				);
 			case "delete":
 				return (
 					<div className="flex gap-3">
-						<PrimaryButton text="Delete" onClick={handleDelete} />
-						<DefaultButton text="Cancel" onClick={onClose} />
+						<Button icon={isOperationLoading ? <Spinner size="tiny" /> : undefined} onClick={handleDelete}>
+							Delete
+						</Button>
+						<Button icon={isOperationLoading ? <Spinner size="tiny" /> : undefined} onClick={onClose}>
+							Cancel
+						</Button>
 					</div>
 				);
 			default:

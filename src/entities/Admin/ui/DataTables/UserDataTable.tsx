@@ -77,6 +77,7 @@ export const UserDataTable: FC<DataTableProps> = () => {
 	const toasterId = useId("toaster-userdatatable");
 	const { dispatchToast } = useToastController(toasterId);
 
+	const [isOperationLoading, setIsOperationLoading] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { t } = useTranslation();
 	const { currentPage, setData } = useAdminStore();
@@ -141,6 +142,7 @@ export const UserDataTable: FC<DataTableProps> = () => {
 	};
 
 	const onSave = async (saveData: Partial<Employee>) => {
+		setIsOperationLoading(true);
 		try {
 			const id = saveData.id;
 			switch (mode) {
@@ -160,6 +162,8 @@ export const UserDataTable: FC<DataTableProps> = () => {
 		} catch (e) {
 			console.log(e);
 			notify();
+		} finally {
+			setIsOperationLoading(false);
 		}
 	};
 
@@ -216,6 +220,7 @@ export const UserDataTable: FC<DataTableProps> = () => {
 	return (
 		<>
 			<EmployeeModal
+				isOperationLoading={isOperationLoading}
 				isOpen={isOpen}
 				mode={mode}
 				onClose={() => setIsOpen(false)}

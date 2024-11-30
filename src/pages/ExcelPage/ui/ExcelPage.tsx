@@ -5,7 +5,7 @@ import * as XLSX from "xlsx";
 import { Header } from "@/widgets/Header/ui/Header";
 import { Stack } from "@fluentui/react";
 import { useDebounce } from "@/shared/lib/hooks";
-import { Button, Title3 } from "@fluentui/react-components";
+import { Button, Card, Spinner, Title3 } from "@fluentui/react-components";
 import { t } from "i18next";
 import { ExcelTable } from "./ExcelTable";
 import ExcelModal from "@/widgets/ExcelModal/ui/ExcelModal";
@@ -144,28 +144,17 @@ const ExcelPage: React.FC = () => {
 					padding: "20px",
 				}}
 			>
-				<Stack
-					tokens={{ childrenGap: 20, padding: 10 }}
-					style={{
-						width: "100%",
-						padding: "20px",
-						border: "1px solid #ccc",
-						borderRadius: "8px",
-						boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-						backgroundColor: "#fff",
-					}}
-				>
+				<Card className="w-full min-h-[50vh]">
 					<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Title3>Редактирование файла</Title3>
-            <ExcelModal />
-          </div>
+						<Title3>Редактирование файла</Title3>
+						<ExcelModal />
+					</div>
 
-              
 					<div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
 						{isFileLoaded ? (
 							<ExcelTable data={data} setData={setData} handleCellChange={handleCellChange} />
 						) : (
-							<p>Загрузка файла...</p>
+							<Spinner size="large" />
 						)}
 					</div>
 					{fileUrl && (
@@ -175,7 +164,7 @@ const ExcelPage: React.FC = () => {
 							</Button>
 						</div>
 					)}
-				</Stack>
+				</Card>
 			</Stack>
 		</>
 	);

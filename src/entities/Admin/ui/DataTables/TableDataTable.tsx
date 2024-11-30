@@ -64,6 +64,7 @@ export const TableDataTable: FC<DataTableProps> = () => {
 	const { currentPage, setData } = useAdminStore();
 	const [currentTables, setCurrentTables] = useState<ExcelFile[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isOperationLoading, setIsOperationLoading] = useState(false);
 	const {
 		selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected, selectedRows },
 		getRows,
@@ -123,19 +124,30 @@ export const TableDataTable: FC<DataTableProps> = () => {
 		setIsOpen(true);
 	};
 
-	const onSave = async (saveData: Partial<ExcelFile> | ExcelFile) => {
-		switch (mode) {
-			case "create":
-				await $api.post("/excel", saveData);
-				break;
-			case "delete":
-				await $api.delete("/excel/" + saveData.id);
-				break;
-			case "update":
-				await $api.put("/excel/" + saveData.id, saveData);
-				break;
+	const onSave = async (saveData: ExcelFile & { oldName: string }) => {
+		try {
+			setIsOperationLoading(true);
+			switch (mode) {
+				case "create":
+					await $api.post("/excel/create", { filename: saveData.name });
+					break;
+				case "delete":
+					await $api.delete("/excel/delete/" + saveData.name);
+					break;
+				case "update":
+					await $api.post("/excel/rename_file", {
+						old_key: saveData.oldName,
+						new_key: saveData.name,
+					});
+					break;
+			}
+			fetchTables();
+		} catch (e) {
+			notify();
+			console.log(e);
+		} finally {
+			setIsOperationLoading(false);
 		}
-		fetchTables();
 	};
 
 	useEffect(() => {
@@ -179,18 +191,28 @@ export const TableDataTable: FC<DataTableProps> = () => {
 
 	const deleteSelected = async () => {
 		try {
-			for (const row of selectedRows) {
-				console.log(rows, row);
+			for (const row in Array(...selectedRows)) {
+				// @ts-ignore
+				await $api.delete("/excel/delete/" + rows[row].item.name);
 			}
+			fetchTables();
 			notifySuccess();
 		} catch (e) {
+			console.log(e);
 			notify();
 		}
 	};
-
+	console.log(rows);
 	return (
 		<>
-			<TableModal isOpen={isOpen} mode={mode} onClose={() => setIsOpen(false)} onSave={onSave} table={currentFile} />
+			<TableModal
+				isOperationLoading={isOperationLoading}
+				isOpen={isOpen}
+				mode={mode}
+				onClose={() => setIsOpen(false)}
+				onSave={onSave}
+				table={currentFile}
+			/>
 			<Toaster toasterId={toasterId} />
 			<div className="m-2 flex gap-2">
 				<Button
@@ -199,7 +221,7 @@ export const TableDataTable: FC<DataTableProps> = () => {
 							id: "",
 							last_modified: "",
 							name: "",
-							url: "",
+							download_link: "",
 							size: 0,
 						})
 					}
@@ -269,8 +291,9 @@ export const TableDataTable: FC<DataTableProps> = () => {
 												aria-label="Delete"
 											/>
 											<Button
+												as="a"
 												style={{ marginRight: 5 }}
-												href={item.url}
+												href={item.download_link}
 												download={item.name}
 												icon={<ArrowDownloadFilled />}
 												aria-label="Download"

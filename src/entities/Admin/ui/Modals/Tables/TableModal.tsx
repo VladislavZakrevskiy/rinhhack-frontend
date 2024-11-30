@@ -1,37 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { DatePicker, DefaultButton, Dialog, DialogFooter, DialogType, PrimaryButton, TextField } from "@fluentui/react";
+import { DefaultButton, Dialog, DialogFooter, DialogType, PrimaryButton, TextField } from "@fluentui/react";
 import { ExcelFile } from "@/shared/types/ExcelFile";
+import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 
 interface EmployeeModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	onSave: (employee: ExcelFile) => Promise<void>;
+	onSave: (employee: ExcelFile & { oldName: string }) => Promise<void>;
 	table?: ExcelFile;
 	mode: "create" | "update" | "delete";
+	isOperationLoading: boolean;
 }
 
-export const TableModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, table, mode }) => {
-	const [last_modified, setLastModified] = useState(new Date(table?.last_modified || new Date()));
+export const TableModal: React.FC<EmployeeModalProps> = ({
+	isOpen,
+	onClose,
+	onSave,
+	table,
+	mode,
+	isOperationLoading,
+}) => {
 	const [name, setName] = useState(table?.name || "");
-	const [url, setUrl] = useState(table?.url || "");
-	const [size, setSize] = useState<number>(table?.size || 0);
+	const [oldName, setOldName] = useState(table?.name || "");
 
 	useEffect(() => {
 		if (table) {
-			setSize(table?.size);
-			setLastModified(new Date(table.last_modified));
-			setUrl(table.url);
 			setName(table.name);
+			setOldName(table.name);
 		}
-	}, []);
+	}, [table]);
 
 	const handleSave = async () => {
-		const newEmployee: ExcelFile = {
+		const newEmployee: ExcelFile & { oldName: string } = {
 			id: table?.id || "",
-			size: size,
-			last_modified: last_modified.toISOString(),
+			size: table?.size || 0,
+			last_modified: new Date(table?.last_modified || 0).toISOString(),
 			name,
-			url,
+			download_link: table?.download_link || "",
+			oldName: oldName,
 		};
 		await onSave(newEmployee);
 		onClose();
@@ -39,12 +45,13 @@ export const TableModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSa
 
 	const handleDelete = async () => {
 		if (table) {
-			const newTable: ExcelFile = {
+			const newTable: ExcelFile & { oldName: string } = {
 				id: table?.id || "",
-				size: size,
-				last_modified: last_modified.toISOString(),
+				size: table?.size || 0,
+				last_modified: new Date(table?.last_modified || "").toISOString(),
 				name,
-				url,
+				download_link: table?.download_link || "",
+				oldName: oldName,
 			};
 			await onSave(newTable);
 		}
@@ -63,18 +70,6 @@ export const TableModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSa
 							onChange={(e, newValue) => setName(newValue || "")}
 							required={mode === "create"}
 						/>
-
-						<DatePicker
-							label="Last Modified"
-							value={last_modified}
-							onSelectDate={(date) => setLastModified(date || new Date())}
-						/>
-						<TextField
-							required={mode === "create"}
-							label="Creator Id"
-							value={creatorId}
-							onChange={(e, newValue) => setCreatorId(newValue || "")}
-						/>
 					</div>
 				);
 			case "delete":
@@ -90,15 +85,15 @@ export const TableModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSa
 			case "update":
 				return (
 					<div className="flex gap-3">
-						<PrimaryButton text="Save" onClick={handleSave} />
-						<DefaultButton text="Cancel" onClick={onClose} />
+						<PrimaryButton disabled={isOperationLoading} text="Save" onClick={handleSave} />
+						<DefaultButton disabled={isOperationLoading} text="Cancel" onClick={onClose} />
 					</div>
 				);
 			case "delete":
 				return (
 					<div className="flex gap-3">
-						<PrimaryButton text="Delete" onClick={handleDelete} />
-						<DefaultButton text="Cancel" onClick={onClose} />
+						<PrimaryButton disabled={isOperationLoading} text="Delete" onClick={handleDelete} />
+						<DefaultButton disabled={isOperationLoading} text="Cancel" onClick={onClose} />
 					</div>
 				);
 			default:
@@ -107,18 +102,20 @@ export const TableModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSa
 	};
 
 	return (
-		<Dialog
-			hidden={!isOpen}
-			minWidth={"60%"}
-			onDismiss={onClose}
-			dialogContentProps={{
-				type: DialogType.largeHeader,
-				title: mode === "create" ? "Create Table" : mode === "update" ? "Update Table" : "Delete Table",
-				subText: mode === "delete" ? "This action cannot be undone." : undefined,
-			}}
-		>
-			{renderContent()}
-			<DialogFooter>{renderActions()}</DialogFooter>
-		</Dialog>
+		<FluentProvider theme={webLightTheme}>
+			<Dialog
+				hidden={!isOpen}
+				minWidth={"60%"}
+				onDismiss={onClose}
+				dialogContentProps={{
+					type: DialogType.largeHeader,
+					title: mode === "create" ? "Create Table" : mode === "update" ? "Update Table" : "Delete Table",
+					subText: mode === "delete" ? "This action cannot be undone." : undefined,
+				}}
+			>
+				{renderContent()}
+				<DialogFooter>{renderActions()}</DialogFooter>
+			</Dialog>
+		</FluentProvider>
 	);
 };

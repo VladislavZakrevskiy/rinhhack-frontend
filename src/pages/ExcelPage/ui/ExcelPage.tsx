@@ -18,8 +18,8 @@ const ExcelPage: React.FC = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isFileLoaded, setIsFileLoaded] = useState<boolean>(false);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null); // Хранит таймер debounce
-  const pendingData = useRef<SpreadsheetData | null>(null); // Хранит данные для отправки
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const pendingData = useRef<SpreadsheetData | null>(null);
 
   useEffect(() => {
     const socketConnection = io("http://pepper-coding.online", {
@@ -77,10 +77,10 @@ const ExcelPage: React.FC = () => {
     }
 
     setData(newData);
-    pendingData.current = newData; // Сохраняем данные для отправки
+    pendingData.current = newData;
 
     if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current); // Сбрасываем старый таймер
+      clearTimeout(debounceTimer.current);
     }
 
     debounceTimer.current = setTimeout(() => {
@@ -104,7 +104,7 @@ const ExcelPage: React.FC = () => {
           console.error("Error encoding and sending file:", error);
         }
       }
-    }, 5000); // Устанавливаем задержку в 5000 мс (5 секунд)
+    }, 5000);
   };
 
   const readExcelFile = async (arrayBuffer: ArrayBuffer) => {

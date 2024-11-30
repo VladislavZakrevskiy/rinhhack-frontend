@@ -3,6 +3,7 @@ import { io, Socket } from "socket.io-client";
 import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
 import * as XLSX from "xlsx";
 import { Header } from "@/widgets/Header/ui/Header";
+import { Stack } from "@fluentui/react";
 
 interface WebSocketMessage {
 	action: string;

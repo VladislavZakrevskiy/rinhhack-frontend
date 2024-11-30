@@ -60,7 +60,7 @@ const MainPage = memo(() => {
 		const fetchExcels = async () => {
 			try {
 				setIsLoading(true);
-				const res = await $api.get<void, AxiosResponse<ExcelFile[]>>("/excel/user");
+				const res = await $api.get<void, AxiosResponse<ExcelFile[]>>("/excel/user1");
 				if (res.data) {
 					setExcels(res.data);
 				} else {
@@ -111,7 +111,7 @@ const MainPage = memo(() => {
 							</Skeleton>
 						</>
 					) : (
-						excels.map((excel) => (
+						excels?.map((excel) => (
 							<Card>
 								<CardHeader>
 									<Title3>{excel.name}</Title3>

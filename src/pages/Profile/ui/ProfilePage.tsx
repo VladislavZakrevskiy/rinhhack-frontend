@@ -33,7 +33,7 @@ const ProfilePage = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isExcelLoading, setIsExcelLoading] = useState(false);
 	const [isLastExcelLoading, setIsLastExcelLoading] = useState(false);
-	const [currentUser, setCurrentUser] = useState<Employee & { first_name: string; last_name: string }>();
+	const [currentUser, setCurrentUser] = useState<Employee & { firstName: string; lastName: string }>();
 	const [excels, setExcels] = useState<ExcelFile[]>([]);
 	const [lastExcel, setLastExcel] = useState<ExcelFile>();
 
@@ -59,7 +59,7 @@ const ProfilePage = () => {
 		const fetchMe = async () => {
 			try {
 				setIsLoading(true);
-				const res = await $api.get<void, AxiosResponse<Employee & { first_name: string; last_name: string }>>(
+				const res = await $api.get<void, AxiosResponse<Employee & { firstName: string; lastName: string }>>(
 					"/users/" + id,
 				);
 				if (res.data) {
@@ -81,7 +81,7 @@ const ProfilePage = () => {
 		const fetchLastExcel = async () => {
 			try {
 				setIsLastExcelLoading(true);
-				const res = await $api.get<void, AxiosResponse<ExcelFile>>("/excel/user/last");
+				const res = await $api.get<void, AxiosResponse<ExcelFile>>("/excel/user");
 				if (res.data) {
 					setLastExcel(res.data);
 				} else {
@@ -101,7 +101,7 @@ const ProfilePage = () => {
 		const fetchExcels = async () => {
 			try {
 				setIsExcelLoading(true);
-				const res = await $api.get<void, AxiosResponse<ExcelFile[]>>("/excel/user");
+				const res = await $api.get<void, AxiosResponse<ExcelFile[]>>("/excel/user1");
 				if (res.data) {
 					setExcels(res.data);
 				} else {
@@ -151,12 +151,12 @@ const ProfilePage = () => {
 								<div className="flex gap-3 items-center">
 									<Avatar
 										size={64}
-										aria-label={currentUser?.first_name}
-										name={currentUser?.first_name + " " + currentUser?.last_name}
+										aria-label={currentUser?.firstName}
+										name={currentUser?.firstName + " " + currentUser?.lastName}
 										badge={{ status: "available" }}
 									/>
 									<Title3>
-										{currentUser?.first_name} {currentUser?.last_name}
+										{currentUser?.firstName} {currentUser?.lastName}
 									</Title3>
 								</div>
 								<div className="flex flex-col items-start ">
@@ -183,17 +183,17 @@ const ProfilePage = () => {
 							</>
 						) : lastExcel ? (
 							<>
-								<Subtitle2>{lastExcel?.name}</Subtitle2>
+								{/* <Subtitle2>{lastExcel?.name}</Subtitle2>
 								<div className="flex gap-2">
 									<Avatar
-										aria-label={lastExcel?.creator.first_name}
-										name={lastExcel?.creator.first_name + " " + lastExcel?.creator.last_name}
+										aria-label={lastExcel?.creator.firstName}
+										name={lastExcel?.creator.firstName + " " + lastExcel?.creator.lastName}
 										badge={{ status: "available" }}
 									/>
 									<Text>
-										{lastExcel?.creator.first_name} {lastExcel?.creator.last_name}
+										{lastExcel?.creator.firstName} {lastExcel?.creator.lastName}
 									</Text>
-								</div>
+								</div> */}
 							</>
 						) : (
 							<Subtitle2>{t("no lastModified")}</Subtitle2>
@@ -235,12 +235,12 @@ const ProfilePage = () => {
 								</CardHeader>
 								<div className="flex gap-2">
 									<Avatar
-										aria-label={excel.creator.first_name}
-										name={excel.creator.first_name + " " + excel.creator.last_name}
+										aria-label={excel.creator.firstName}
+										name={excel.creator.firstName + " " + excel.creator.lastName}
 										badge={{ status: "available" }}
 									/>
 									<Text>
-										{excel.creator.first_name} {excel.creator.last_name}
+										{excel.creator.firstName} {excel.creator.lastName}
 									</Text>
 								</div>
 							</Card>
@@ -258,12 +258,12 @@ const ProfilePage = () => {
 						<div className="flex gap-3 items-center">
 							<Avatar
 								size={64}
-								aria-label={currentUser?.first_name}
-								name={currentUser?.first_name + " " + currentUser?.last_name}
+								aria-label={currentUser?.firstName}
+								name={currentUser?.firstName + " " + currentUser?.lastName}
 								badge={{ status: "available" }}
 							/>
 							<Title3>
-								{currentUser?.first_name} {currentUser?.last_name}
+								{currentUser?.firstName} {currentUser?.lastName}
 							</Title3>
 						</div>
 						<div className="flex flex-col items-start ">

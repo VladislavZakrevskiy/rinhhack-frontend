@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Employee } from "@/shared/types/Employee";
 import { UserRoles } from "@/entities/User";
 import {
@@ -26,15 +26,33 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 	const [role, setRole] = useState<UserRoles>(employee?.role || UserRoles.USER);
 	const [position, setPosition] = useState(employee?.position || "");
 	const [department, setDepartment] = useState(employee?.department || "");
+	const [username, setUsername] = useState("");
+	const [password, setPaswword] = useState("");
+
+	useEffect(() => {
+		if (employee) {
+			setFirstName(employee?.firstName);
+			setLastName(employee.lastName);
+			setEmail(employee.email);
+			setRole(employee.role);
+			setPosition(employee.position);
+			setDepartment(employee.department);
+			setUsername(employee.username!);
+		}
+	}, [employee]);
 
 	const handleSave = async () => {
-		const newEmployee: Omit<Employee, "id"> = {
+		const newEmployee: Employee & { password: string } = {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+			id: employee?.id!,
 			firstName: firstName,
 			lastName: lastName,
 			email,
 			role,
 			position,
 			department,
+			password,
+			username,
 		};
 		await onSave(newEmployee);
 		onClose();
@@ -52,7 +70,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 			case "create":
 			case "update":
 				return (
-					<div className="p-3">
+					<>
 						<TextField
 							label="First Name"
 							value={firstName}
@@ -66,8 +84,22 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 							required={mode === "create"}
 						/>
 						<TextField
+							label="Username"
+							value={username}
+							onChange={(e, newValue) => setUsername(newValue || "")}
+							required={mode === "create"}
+						/>
+						<TextField
+							label="Password"
+							type="password"
+							value={password}
+							onChange={(e, newValue) => setPaswword(newValue || "")}
+							required={mode === "create"}
+						/>
+						<TextField
 							required={mode === "create"}
 							label="Email"
+							type="email"
 							value={email}
 							onChange={(e, newValue) => setEmail(newValue || "")}
 						/>
@@ -93,7 +125,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 							]}
 							onChange={(e, option) => setRole(option?.key as UserRoles)}
 						/>
-					</div>
+					</>
 				);
 			case "delete":
 				return null;
@@ -128,6 +160,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, 
 		<Dialog
 			hidden={!isOpen}
 			onDismiss={onClose}
+			minWidth={"60%"}
 			dialogContentProps={{
 				type: DialogType.largeHeader,
 				title: mode === "create" ? "Create Employee" : mode === "update" ? "Update Employee" : "Delete Employee",

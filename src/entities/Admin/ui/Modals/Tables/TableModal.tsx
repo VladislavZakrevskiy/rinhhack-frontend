@@ -104,6 +104,7 @@ export const TableModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSa
 	return (
 		<Dialog
 			hidden={!isOpen}
+			minWidth={"60%"}
 			onDismiss={onClose}
 			dialogContentProps={{
 				type: DialogType.largeHeader,

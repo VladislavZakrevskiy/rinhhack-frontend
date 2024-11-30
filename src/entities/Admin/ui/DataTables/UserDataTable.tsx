@@ -35,15 +35,15 @@ interface DataTableProps {}
 
 const tableColumns: TableColumnDefinition<Employee>[] = [
 	createTableColumn<Employee>({
-		columnId: "first_name",
+		columnId: "firstName",
 		compare: (a, b) => {
-			return a.first_name.localeCompare(b.first_name);
+			return a.firstName.localeCompare(b.firstName);
 		},
 	}),
 	createTableColumn<Employee>({
-		columnId: "last_name",
+		columnId: "lastName",
 		compare: (a, b) => {
-			return a.last_name.localeCompare(b.last_name);
+			return a.lastName.localeCompare(b.lastName);
 		},
 	}),
 	createTableColumn<Employee>({
@@ -84,7 +84,7 @@ export const UserDataTable: FC<DataTableProps> = () => {
 		sort: { getSortDirection, sort, toggleColumnSort },
 	} = useTableFeatures({ columns: tableColumns, items: currentPage?.data ? (currentPage.data as Employee[]) : [] }, [
 		useTableSort({
-			defaultSortState: { sortColumn: "first_name", sortDirection: "ascending" },
+			defaultSortState: { sortColumn: "firstName", sortDirection: "ascending" },
 		}),
 		useTableSelection({
 			selectionMode: "multiselect",
@@ -134,18 +134,26 @@ export const UserDataTable: FC<DataTableProps> = () => {
 	};
 
 	const onSave = async (saveData: Partial<Employee>) => {
-		switch (mode) {
-			case "create":
-				await $api.post("/users/create", saveData);
-				break;
-			case "delete":
-				await $api.delete("/users/delete/" + saveData.id);
-				break;
-			case "update":
-				await $api.patch("/users/update/" + saveData.id, saveData);
-				break;
+		try {
+			const id = saveData.id;
+			switch (mode) {
+				case "create":
+					delete saveData.id;
+					await $api.post("/users/", saveData);
+					break;
+				case "delete":
+					await $api.delete("/users/" + saveData.id);
+					break;
+				case "update":
+					delete saveData.id;
+					await $api.patch("/users/" + id, saveData);
+					break;
+			}
+			fetchUsers();
+		} catch (e) {
+			console.log(e);
+			notify();
 		}
-		fetchUsers();
 	};
 
 	useEffect(() => {
@@ -214,10 +222,11 @@ export const UserDataTable: FC<DataTableProps> = () => {
 						openModal("create", {
 							department: "",
 							email: "",
-							first_name: "",
+							firstName: "",
 							id: "",
-							last_name: "",
+							lastName: "",
 							position: "",
+							username: "",
 							role: UserRoles.USER,
 						})
 					}
@@ -239,8 +248,8 @@ export const UserDataTable: FC<DataTableProps> = () => {
 							checkboxIndicator={{ "aria-label": "Select all rows " }}
 						/>
 
-						<TableHeaderCell {...headerSortProps("first_name")}>{t("first_name")}</TableHeaderCell>
-						<TableHeaderCell {...headerSortProps("last_name")}>{t("last_name")}</TableHeaderCell>
+						<TableHeaderCell {...headerSortProps("firstName")}>{t("firstName")}</TableHeaderCell>
+						<TableHeaderCell {...headerSortProps("lastName")}>{t("lastName")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("email")}>{t("email")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("role")}>{t("role")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("position")}>{t("position")}</TableHeaderCell>
@@ -258,17 +267,17 @@ export const UserDataTable: FC<DataTableProps> = () => {
 										<TableCellLayout
 											media={
 												<Avatar
-													aria-label={item.first_name}
-													name={item.first_name + " " + item.last_name}
+													aria-label={item.firstName}
+													name={item.firstName + " " + item.lastName}
 													badge={{ status: "available" }}
 												/>
 											}
 										>
-											{item.first_name}
+											{item.firstName}
 										</TableCellLayout>
 									</TableCell>
 									<TableCell>
-										<TableCellLayout>{item.last_name}</TableCellLayout>
+										<TableCellLayout>{item.lastName}</TableCellLayout>
 									</TableCell>
 									<TableCell>
 										<TableCellLayout>{item.email}</TableCellLayout>

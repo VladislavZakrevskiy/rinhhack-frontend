@@ -34,5 +34,10 @@
   "error fetch user": "Error of fetching profile",
   "lastModified excel": "Last Modified Table",
   "no lastModified": "No last modified table",
-  "adminpanel": "Admin panel"
+  "adminpanel": "Admin panel",
+  "download new": "Download new Excel ",
+  "add row": "Add row",
+  "remove column": "Remove column",
+  "add column": "Add column",
+  "remove row": "Remove row"
 }

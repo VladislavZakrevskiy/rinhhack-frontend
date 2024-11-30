@@ -34,5 +34,10 @@
   "error fetch user": "Ошибка загрузки профиля",
   "lastModified excel": "Последняя таблица",
   "no lastModified": "Нет последнего измененного файла",
-  "adminpanel": "Админ панель"
+  "adminpanel": "Админ панель",
+  "download new": "Скачать обновленный файл Excel",
+  "add column": "Добавить колонку",
+  "remove column": "Убрать колонку",
+  "add row": "Добавить ряд",
+  "remove row": "Убрать ряд"
 }

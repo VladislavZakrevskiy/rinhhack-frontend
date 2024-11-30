@@ -1,6 +1,6 @@
 import { memo, useCallback } from "react";
 import { useSystemStore } from "@/entities/System";
-import { System20Filled, WeatherMoon20Filled, WeatherSunny20Filled } from "@fluentui/react-icons";
+import { WeatherMoon20Filled, WeatherSunny20Filled } from "@fluentui/react-icons";
 import { Button } from "@fluentui/react-components";
 
 export const ThemeSwitcher = memo(() => {
@@ -12,17 +12,10 @@ export const ThemeSwitcher = memo(() => {
 				setTheme("light");
 				break;
 			case "light":
-				setTheme("system");
-				break;
-			case "system":
-				setTheme("dark");
+				setTheme("light");
 				break;
 		}
 	}, [theme, setTheme]);
 
-	return (
-		<Button onClick={onToggle}>
-			{theme === "light" ? <WeatherSunny20Filled /> : theme === "dark" ? <WeatherMoon20Filled /> : <System20Filled />}
-		</Button>
-	);
+	return <Button onClick={onToggle}>{theme === "light" ? <WeatherSunny20Filled /> : <WeatherMoon20Filled />}</Button>;
 });

@@ -10,6 +10,11 @@ interface EmployeeModalProps {
 	table?: ExcelFile;
 	mode: "create" | "update" | "delete";
 	isOperationLoading: boolean;
+	isOpen: boolean;
+	onClose: () => void;
+	onSave: (employee: ExcelFile) => Promise<void>;
+	table?: ExcelFile;
+	mode: "create" | "update" | "delete";
 }
 
 export const TableModal: React.FC<EmployeeModalProps> = ({

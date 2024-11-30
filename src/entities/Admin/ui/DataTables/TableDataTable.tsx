@@ -25,12 +25,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { useAdminStore } from "../../model/useAdminStore";
 import { $api } from "@/shared/api/api";
-import { AxiosResponse } from "axios";
-import { ArrowDownloadFilled, DeleteRegular, EditRegular } from "@fluentui/react-icons";
+import { DeleteRegular, EditRegular } from "@fluentui/react-icons";
 import { ExcelFile } from "@/shared/types/ExcelFile";
-import { useNavigate } from "react-router-dom";
 import { TableModal } from "../Modals/Tables/TableModal";
-import { getExcelPage } from "@/shared/consts/router";
 
 interface DataTableProps {}
 
@@ -85,16 +82,20 @@ export const TableDataTable: FC<DataTableProps> = () => {
 	const fetchTables = async () => {
 		try {
 			setIsLoading(true);
-			const res = await $api.get<void, AxiosResponse<{ files: ExcelFile[] }>>("/excel/files");
-			if (res.data) {
+			const res = await $api.get("/excel/files");
+			if (res.data?.files) {
 				setCurrentTables(res.data.files);
-				setData(currentPage!.id, res.data.files);
+				const pageId = currentPage?.id;
+				if (pageId) {
+					setData(pageId, res.data.files);
+				} else {
+					console.error("No current page ID available");
+				}
 			} else {
-				notify();
+				console.error("No files found");
 			}
 		} catch (e) {
 			console.log(e);
-			notify();
 		} finally {
 			setIsLoading(false);
 		}

@@ -8,6 +8,7 @@ import { useDebounce } from "@/shared/lib/hooks";
 import { Button, Title3 } from "@fluentui/react-components";
 import { t } from "i18next";
 import { ExcelTable } from "./ExcelTable";
+import ExcelModal from "@/widgets/ExcelModal/ui/ExcelModal";
 
 interface WebSocketMessage {
 	action: string;
@@ -154,7 +155,12 @@ const ExcelPage: React.FC = () => {
 						backgroundColor: "#fff",
 					}}
 				>
-					<Title3>Редактирование файла</Title3>
+					<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Title3>Редактирование файла</Title3>
+            <ExcelModal />
+          </div>
+
+              
 					<div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
 						{isFileLoaded ? (
 							<ExcelTable data={data} setData={setData} handleCellChange={handleCellChange} />

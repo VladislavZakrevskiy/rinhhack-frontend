@@ -69,6 +69,7 @@ export const TableDataTable: FC<DataTableProps> = () => {
 	const nav = useNavigate();
 	const { t } = useTranslation();
 	const { currentPage, setData } = useAdminStore();
+	const [] = useState();
 	const {
 		selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected, selectedRows },
 		getRows,
@@ -127,13 +128,13 @@ export const TableDataTable: FC<DataTableProps> = () => {
 	const onSave = async (saveData: Partial<ExcelFile> | ExcelFile) => {
 		switch (mode) {
 			case "create":
-				await $api.post("/excel/create", saveData);
+				await $api.post("/excel", saveData);
 				break;
 			case "delete":
-				await $api.delete("/excel/delete/" + saveData.id);
+				await $api.delete("/excel/" + saveData.id);
 				break;
 			case "update":
-				await $api.patch("/excel/update/" + saveData.id, saveData);
+				await $api.put("/excel/" + saveData.id, saveData);
 				break;
 		}
 		fetchTables();

@@ -52,6 +52,6 @@ export const useAdminStore = create<State>((set, get) => ({
 	setData: (pageId, data) =>
 		// @ts-ignore
 		set((state) => ({
-			pages: state.pages.map((page) => (page.id === pageId ? { ...page, data } : page)),
+			pages: state.pages.map((page) => (page.id === pageId ? { ...page, data: [...data] } : page)),
 		})),
 }));

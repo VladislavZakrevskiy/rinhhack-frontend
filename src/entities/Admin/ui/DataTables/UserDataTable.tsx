@@ -3,6 +3,7 @@ import {
 	Avatar,
 	Button,
 	createTableColumn,
+	Spinner,
 	Table,
 	TableBody,
 	TableCell,
@@ -76,13 +77,15 @@ export const UserDataTable: FC<DataTableProps> = () => {
 	const toasterId = useId("toaster-userdatatable");
 	const { dispatchToast } = useToastController(toasterId);
 
+	const [isLoading, setIsLoading] = useState(false);
 	const { t } = useTranslation();
 	const { currentPage, setData } = useAdminStore();
+	const [currentUsers, setCurrentUsers] = useState<Employee[]>([]);
 	const {
 		selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected, selectedRows },
 		getRows,
 		sort: { getSortDirection, sort, toggleColumnSort },
-	} = useTableFeatures({ columns: tableColumns, items: currentPage?.data ? (currentPage.data as Employee[]) : [] }, [
+	} = useTableFeatures({ columns: tableColumns, items: currentUsers }, [
 		useTableSort({
 			defaultSortState: { sortColumn: "firstName", sortDirection: "ascending" },
 		}),
@@ -97,15 +100,19 @@ export const UserDataTable: FC<DataTableProps> = () => {
 
 	const fetchUsers = async () => {
 		try {
+			setIsLoading(true);
 			const res = await $api.get<void, AxiosResponse<Employee[]>>("/users/users");
 			if (res.data) {
 				setData(currentPage!.id, res.data);
+				setCurrentUsers(res.data);
 			} else {
 				notify();
 			}
 		} catch (e) {
 			console.log(e);
 			notify();
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -146,7 +153,7 @@ export const UserDataTable: FC<DataTableProps> = () => {
 					break;
 				case "update":
 					delete saveData.id;
-					await $api.patch("/users/" + id, saveData);
+					await $api.put("/users/" + id, saveData);
 					break;
 			}
 			fetchUsers();
@@ -232,10 +239,13 @@ export const UserDataTable: FC<DataTableProps> = () => {
 					}
 					appearance="primary"
 				>
-					Create
+					{t("create")}
 				</Button>
 				<Button onClick={deleteSelected} appearance="primary">
-					Delete All
+					{t("delete selected")}
+				</Button>
+				<Button onClick={fetchUsers} appearance="primary">
+					{t("reload")}
 				</Button>
 			</div>
 			<Table sortable>
@@ -250,10 +260,10 @@ export const UserDataTable: FC<DataTableProps> = () => {
 
 						<TableHeaderCell {...headerSortProps("firstName")}>{t("firstName")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("lastName")}>{t("lastName")}</TableHeaderCell>
-						<TableHeaderCell {...headerSortProps("email")}>{t("email")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("role")}>{t("role")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("position")}>{t("position")}</TableHeaderCell>
 						<TableHeaderCell {...headerSortProps("department")}>{t("department")}</TableHeaderCell>
+						<TableHeaderCell {...headerSortProps("email")}>{t("email")}</TableHeaderCell>
 						<TableHeaderCell>{t("actions")}</TableHeaderCell>
 					</TableRow>
 				</TableHeader>
@@ -280,9 +290,6 @@ export const UserDataTable: FC<DataTableProps> = () => {
 										<TableCellLayout>{item.lastName}</TableCellLayout>
 									</TableCell>
 									<TableCell>
-										<TableCellLayout>{item.email}</TableCellLayout>
-									</TableCell>
-									<TableCell>
 										<TableCellLayout>{item.role}</TableCellLayout>
 									</TableCell>
 									<TableCell>
@@ -290,6 +297,9 @@ export const UserDataTable: FC<DataTableProps> = () => {
 									</TableCell>
 									<TableCell>
 										<TableCellLayout>{item.department}</TableCellLayout>
+									</TableCell>
+									<TableCell>
+										<TableCellLayout>{item.email}</TableCellLayout>
 									</TableCell>
 									<TableCell role="gridcell">
 										<TableCellLayout>
@@ -307,6 +317,11 @@ export const UserDataTable: FC<DataTableProps> = () => {
 						: undefined}
 				</TableBody>
 			</Table>
+			{isLoading && (
+				<div className="flex justify-center items-center w-full p-5">
+					<Spinner size="large" />
+				</div>
+			)}
 		</>
 	);
 };

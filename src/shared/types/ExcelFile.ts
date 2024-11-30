@@ -5,5 +5,4 @@ export interface ExcelFile {
   download_link: string;
   last_modified: string;
   size: number;
-  creatorId: string | number
 }

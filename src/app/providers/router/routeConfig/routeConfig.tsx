@@ -10,6 +10,7 @@ import {
 	getRouteTestPage,
 	getRouteNotFound,
 	getWorkspacePage,
+	getTestExcelPage,
 } from "@/shared/consts/router";
 import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
@@ -19,6 +20,7 @@ import { LazyExcelPage } from "@/pages/ExcelPage";
 import { LazyAdminPage } from "@/pages/AdminPanel";
 import { UserRoles } from "@/entities/User";
 import { LazyWorkspacePage } from "@/pages/WorkpacesPage";
+import { LazyTestExcelPage } from "@/pages/TestExcelPage/ui/TestExcelPage.lazy";
 
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
@@ -44,8 +46,14 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 		element: <LazyErrorPage />,
 	},
 	[AppRoutes.EXCELPAGE]: {
-		path: getExcelPage(":id"),
+		path: getExcelPage(),
 		element: <LazyExcelPage />,
+		authOnly: false,
+	},
+	[AppRoutes.TESTEXCELPAGE]: {
+		path: getTestExcelPage(),
+		element: <LazyTestExcelPage />,
+		authOnly: false,
 	},
 	[AppRoutes.ADMIN]: {
 		path: getRouteAdmin(),

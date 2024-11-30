@@ -1,0 +1,16 @@
+/* app.css */
+.react-spreadsheet__cell {
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.react-spreadsheet__cell--selected {
+    border: 2px solid #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.react-spreadsheet__cell[style] {
+    background-color: var(--cell-bg-color) !important;
+}

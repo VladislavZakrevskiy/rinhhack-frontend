@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import io, { Socket } from "socket.io-client";
 
 // Настройка сервера
-const SOCKET_SERVER_URL = "http://localhost:8000";
+const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL.replace("https", "ws");
 
 // Типы данных
 interface RemoteStreams {

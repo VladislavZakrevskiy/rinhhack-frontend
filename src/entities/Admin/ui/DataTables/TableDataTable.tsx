@@ -3,6 +3,7 @@ import {
 	Avatar,
 	Button,
 	createTableColumn,
+	Spinner,
 	Table,
 	TableBody,
 	TableCell,
@@ -69,12 +70,13 @@ export const TableDataTable: FC<DataTableProps> = () => {
 	const nav = useNavigate();
 	const { t } = useTranslation();
 	const { currentPage, setData } = useAdminStore();
-	const [] = useState();
+	const [currentTables, setCurrentTables] = useState<ExcelFile[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
 	const {
 		selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected, selectedRows },
 		getRows,
 		sort: { getSortDirection, sort, toggleColumnSort },
-	} = useTableFeatures({ columns: tableColumns, items: currentPage?.data ? (currentPage.data as ExcelFile[]) : [] }, [
+	} = useTableFeatures({ columns: tableColumns, items: currentTables }, [
 		useTableSort({
 			defaultSortState: { sortColumn: "firstName", sortDirection: "ascending" },
 		}),
@@ -89,8 +91,10 @@ export const TableDataTable: FC<DataTableProps> = () => {
 
 	const fetchTables = async () => {
 		try {
+			setIsLoading(true);
 			const res = await $api.get<void, AxiosResponse<ExcelFile[]>>("/excel/excel");
 			if (res.data) {
+				setCurrentTables(res.data);
 				setData(currentPage!.id, res.data);
 			} else {
 				notify();
@@ -98,6 +102,8 @@ export const TableDataTable: FC<DataTableProps> = () => {
 		} catch (e) {
 			console.log(e);
 			notify();
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -287,6 +293,11 @@ export const TableDataTable: FC<DataTableProps> = () => {
 						: undefined}
 				</TableBody>
 			</Table>
+			{isLoading && (
+				<div className="flex justify-center items-center w-full p-5">
+					<Spinner size="large" />
+				</div>
+			)}
 		</>
 	);
 };

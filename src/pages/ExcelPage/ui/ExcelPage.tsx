@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
 import * as XLSX from "xlsx";
@@ -18,6 +18,8 @@ const ExcelPage: React.FC = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isFileLoaded, setIsFileLoaded] = useState<boolean>(false);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const pendingData = useRef<SpreadsheetData | null>(null);
 
   useEffect(() => {
     const socketConnection = io("http://pepper-coding.online", {
@@ -75,27 +77,34 @@ const ExcelPage: React.FC = () => {
     }
 
     setData(newData);
+    pendingData.current = newData;
 
-    if (socket) {
-      try {
-        const excelBuffer = generateExcelBufferFromData(newData);
-
-        const updatedFileUrl = URL.createObjectURL(
-          new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-        );
-        setFileUrl(updatedFileUrl);
-
-        const base64File = arrayBufferToBase64(excelBuffer);
-        console.log("Sending modified file in Base64 format:", base64File);
-
-        socket.emit("upload_file", {
-          filename: "modified_file.xlsx",
-          data: base64File,
-        });
-      } catch (error) {
-        console.error("Error encoding and sending file:", error);
-      }
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
     }
+
+    debounceTimer.current = setTimeout(() => {
+      if (socket && pendingData.current) {
+        try {
+          const excelBuffer = generateExcelBufferFromData(pendingData.current);
+
+          const updatedFileUrl = URL.createObjectURL(
+            new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+          );
+          setFileUrl(updatedFileUrl);
+
+          const base64File = arrayBufferToBase64(excelBuffer);
+          console.log("Sending modified file in Base64 format:", base64File);
+
+          socket.emit("upload_file", {
+            filename: "modified_file.xlsx",
+            data: base64File,
+          });
+        } catch (error) {
+          console.error("Error encoding and sending file:", error);
+        }
+      }
+    }, 5000);
   };
 
   const readExcelFile = async (arrayBuffer: ArrayBuffer) => {

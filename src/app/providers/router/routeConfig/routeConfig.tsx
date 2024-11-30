@@ -12,6 +12,7 @@ import {
 	getWorkspacePage,
 	getTestExcelPage,
 	getProfilePage,
+	getVideoChatPage,
 } from "@/shared/consts/router";
 import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
@@ -23,6 +24,7 @@ import { UserRoles } from "@/entities/User";
 import { LazyWorkspacePage } from "@/pages/WorkpacesPage";
 import { LazyTestExcelPage } from "@/pages/TestExcelPage/ui/TestExcelPage.lazy";
 import { LazyProfilePage } from "@/pages/Profile";
+import { LazyVideoChat } from "@/pages/Video";
 
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
@@ -71,6 +73,11 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.PROFILE]: {
 		path: getProfilePage(":id"),
 		element: <LazyProfilePage />,
+		authOnly: true,
+	},
+	[AppRoutes.VIDEOCHAT]: {
+		path: getVideoChatPage(),
+		element: <LazyVideoChat />,
 		authOnly: true,
 	},
 };

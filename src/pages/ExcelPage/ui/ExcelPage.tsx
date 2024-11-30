@@ -19,7 +19,7 @@ const ExcelPage: React.FC = () => {
 	const [fileUrl, setFileUrl] = useState<string | null>(null);
 
 	useEffect(() => {
-		const socketConnection = io("http://pepper-coding.online", {
+		const socketConnection = io(import.meta.env.VITE_API_URL, {
 			transports: ["websocket"],
 		});
 		setSocket(socketConnection);

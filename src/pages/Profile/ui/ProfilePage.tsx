@@ -186,12 +186,12 @@ const ProfilePage = () => {
 								<Subtitle2>{lastExcel?.name}</Subtitle2>
 								<div className="flex gap-2">
 									<Avatar
-										aria-label={lastExcel?.creator.firstName}
-										name={lastExcel?.creator.firstName + " " + lastExcel?.creator.lastName}
+										aria-label={lastExcel?.creator.first_name}
+										name={lastExcel?.creator.first_name + " " + lastExcel?.creator.last_name}
 										badge={{ status: "available" }}
 									/>
 									<Text>
-										{lastExcel?.creator.firstName} {lastExcel?.creator.lastName}
+										{lastExcel?.creator.first_name} {lastExcel?.creator.last_name}
 									</Text>
 								</div>
 							</>
@@ -235,12 +235,12 @@ const ProfilePage = () => {
 								</CardHeader>
 								<div className="flex gap-2">
 									<Avatar
-										aria-label={excel.creator.firstName}
-										name={excel.creator.firstName + " " + excel.creator.lastName}
+										aria-label={excel.creator.first_name}
+										name={excel.creator.first_name + " " + excel.creator.last_name}
 										badge={{ status: "available" }}
 									/>
 									<Text>
-										{excel.creator.firstName} {excel.creator.lastName}
+										{excel.creator.first_name} {excel.creator.last_name}
 									</Text>
 								</div>
 							</Card>

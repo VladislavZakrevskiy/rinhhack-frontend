@@ -1,12 +1,13 @@
 import React from "react";
 import { Button, Toolbar, ToolbarButton } from "@fluentui/react-components";
 import { Link, useNavigate } from "react-router-dom";
-import { useUserStore } from "@/entities/User";
-import { getProfilePage } from "@/shared/consts/router";
+import { UserRoles, useUserStore } from "@/entities/User";
+import { getProfilePage, getRouteAdmin } from "@/shared/consts/router";
 import { LanguageSwitcher } from "@/features/LanguageSwitcher";
 import { ThemeSwitcher } from "@/features/ThemeSwitcher";
 import { ArrowExitFilled } from "@fluentui/react-icons";
 import { USER_ACCESS_TOKEN, USER_REFRESH_TOKEN } from "@/shared/consts/localStorage";
+import { t } from "i18next";
 
 interface HeaderProps {}
 
@@ -44,6 +45,7 @@ export const Header: React.FC<HeaderProps> = () => {
 							Профиль
 						</Button>
 					)}
+					{user?.role === UserRoles.ADMIN && <Button onClick={() => nav(getRouteAdmin())}>{t("adminpanel")}</Button>}
 					<ThemeSwitcher />
 					<LanguageSwitcher />
 					<Button

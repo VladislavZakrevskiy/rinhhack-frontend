@@ -33,5 +33,6 @@
   "no tables": "No Tables",
   "error fetch user": "Error of fetching profile",
   "lastModified excel": "Last Modified Table",
-  "no lastModified": "No last modified table"
+  "no lastModified": "No last modified table",
+  "adminpanel": "Admin panel"
 }

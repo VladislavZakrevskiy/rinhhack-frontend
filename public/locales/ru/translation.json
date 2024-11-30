@@ -33,5 +33,6 @@
   "no tables": "Нет таблиц",
   "error fetch user": "Ошибка загрузки профиля",
   "lastModified excel": "Последняя таблица",
-  "no lastModified": "Нет последнего измененного файла"
+  "no lastModified": "Нет последнего измененного файла",
+  "adminpanel": "Админ панель"
 }

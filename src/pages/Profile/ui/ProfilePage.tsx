@@ -174,7 +174,7 @@ const ProfilePage = () => {
 						)}
 					</Card>
 					<Card>
-						<Title3>{t("lastModified excel")}</Title3>
+						<Title3>{t("last_modified excel")}</Title3>
 						{isLastExcelLoading ? (
 							<>
 								<Skeleton aria-label="Loading Content">
@@ -196,7 +196,7 @@ const ProfilePage = () => {
 								</div> */}
 							</>
 						) : (
-							<Subtitle2>{t("no lastModified")}</Subtitle2>
+							<Subtitle2>{t("no last_modified")}</Subtitle2>
 						)}
 					</Card>
 				</div>

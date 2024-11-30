@@ -39,5 +39,7 @@
   "add row": "Add row",
   "remove column": "Remove column",
   "add column": "Add column",
-  "remove row": "Remove row"
+  "remove row": "Remove row",
+  "size": "Size",
+  "go": "Go"
 }

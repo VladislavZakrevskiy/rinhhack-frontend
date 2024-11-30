@@ -1,27 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DatePicker, DefaultButton, Dialog, DialogFooter, DialogType, PrimaryButton, TextField } from "@fluentui/react";
 import { ExcelFile } from "@/shared/types/ExcelFile";
 
 interface EmployeeModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	onSave: (employee: Omit<ExcelFile, "id" | "creator"> & { creatorId: string }) => Promise<void>;
+	onSave: (employee: ExcelFile) => Promise<void>;
 	table?: ExcelFile;
 	mode: "create" | "update" | "delete";
 }
 
 export const TableModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSave, table, mode }) => {
-	const [lastModified, setLastModified] = useState(new Date(table?.lastModified || new Date()));
+	const [last_modified, setLastModified] = useState(new Date(table?.last_modified || new Date()));
 	const [name, setName] = useState(table?.name || "");
 	const [url, setUrl] = useState(table?.url || "");
-	const [creatorId, setCreatorId] = useState(table?.creator.id || "");
+	const [size, setSize] = useState<number>(table?.size || 0);
+
+	useEffect(() => {
+		if (table) {
+			setSize(table?.size);
+			setLastModified(new Date(table.last_modified));
+			setUrl(table.url);
+			setName(table.name);
+		}
+	}, []);
 
 	const handleSave = async () => {
-		const newEmployee: Omit<ExcelFile, "id" | "creator"> & { creatorId: string } & { id?: string | undefined } = {
-			lastModified: lastModified.toISOString(),
+		const newEmployee: ExcelFile = {
+			id: table?.id || "",
+			size: size,
+			last_modified: last_modified.toISOString(),
 			name,
 			url,
-			creatorId,
 		};
 		await onSave(newEmployee);
 		onClose();
@@ -29,12 +39,12 @@ export const TableModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSa
 
 	const handleDelete = async () => {
 		if (table) {
-			const newTable: Omit<ExcelFile, "id" | "creator"> & { creatorId: string; id?: string } = {
-				creatorId: "",
-				lastModified: "",
-				name: "",
-				url: "",
-				id: table.id,
+			const newTable: ExcelFile = {
+				id: table?.id || "",
+				size: size,
+				last_modified: last_modified.toISOString(),
+				name,
+				url,
 			};
 			await onSave(newTable);
 		}
@@ -53,15 +63,10 @@ export const TableModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose, onSa
 							onChange={(e, newValue) => setName(newValue || "")}
 							required={mode === "create"}
 						/>
-						<TextField
-							label="URL"
-							value={url}
-							onChange={(e, newValue) => setUrl(newValue || "")}
-							required={mode === "create"}
-						/>
+
 						<DatePicker
 							label="Last Modified"
-							value={lastModified}
+							value={last_modified}
 							onSelectDate={(date) => setLastModified(date || new Date())}
 						/>
 						<TextField

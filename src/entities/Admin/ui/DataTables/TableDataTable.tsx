@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import {
-	Avatar,
 	Button,
 	createTableColumn,
 	Spinner,
@@ -27,12 +26,11 @@ import { useTranslation } from "react-i18next";
 import { useAdminStore } from "../../model/useAdminStore";
 import { $api } from "@/shared/api/api";
 import { AxiosResponse } from "axios";
-import { DeleteRegular, EditRegular } from "@fluentui/react-icons";
+import { ArrowDownloadFilled, DeleteRegular, EditRegular } from "@fluentui/react-icons";
 import { ExcelFile } from "@/shared/types/ExcelFile";
 import { useNavigate } from "react-router-dom";
-import { getExcelPage } from "@/shared/consts/router";
 import { TableModal } from "../Modals/Tables/TableModal";
-import { UserRoles } from "@/entities/User";
+import { getExcelPage } from "@/shared/consts/router";
 
 interface DataTableProps {}
 
@@ -44,21 +42,15 @@ const tableColumns: TableColumnDefinition<ExcelFile>[] = [
 		},
 	}),
 	createTableColumn<ExcelFile>({
-		columnId: "url",
+		columnId: "last_modified",
 		compare: (a, b) => {
-			return a.url.localeCompare(b.url);
+			return new Date(a.last_modified).getTime() - new Date(b.last_modified).getTime();
 		},
 	}),
 	createTableColumn<ExcelFile>({
-		columnId: "lastModified",
+		columnId: "size",
 		compare: (a, b) => {
-			return new Date(a.lastModified).getTime() - new Date(b.lastModified).getTime();
-		},
-	}),
-	createTableColumn<ExcelFile>({
-		columnId: "creator",
-		compare: (a, b) => {
-			return a?.creator.firstName?.localeCompare(b?.creator.firstName);
+			return a.size - b.size;
 		},
 	}),
 ];
@@ -92,10 +84,10 @@ export const TableDataTable: FC<DataTableProps> = () => {
 	const fetchTables = async () => {
 		try {
 			setIsLoading(true);
-			const res = await $api.get<void, AxiosResponse<ExcelFile[]>>("/excel/excel");
+			const res = await $api.get<void, AxiosResponse<{ files: ExcelFile[] }>>("/excel/files");
 			if (res.data) {
-				setCurrentTables(res.data);
-				setData(currentPage!.id, res.data);
+				setCurrentTables(res.data.files);
+				setData(currentPage!.id, res.data.files);
 			} else {
 				notify();
 			}
@@ -205,18 +197,10 @@ export const TableDataTable: FC<DataTableProps> = () => {
 					onClick={() =>
 						openModal("create", {
 							id: "",
-							creator: {
-								department: "",
-								email: "",
-								firstName: "",
-								id: "",
-								lastName: "",
-								position: "",
-								role: UserRoles.USER,
-							},
-							lastModified: "",
+							last_modified: "",
 							name: "",
 							url: "",
+							size: 0,
 						})
 					}
 					appearance="primary"
@@ -225,6 +209,9 @@ export const TableDataTable: FC<DataTableProps> = () => {
 				</Button>
 				<Button onClick={deleteSelected} appearance="primary">
 					{t("delete selected")}
+				</Button>
+				<Button onClick={fetchTables} appearance="primary">
+					{t("reload")}
 				</Button>
 			</div>
 			<Table sortable>
@@ -238,44 +225,34 @@ export const TableDataTable: FC<DataTableProps> = () => {
 						/>
 
 						<TableHeaderCell {...headerSortProps("name")}>{t("name")}</TableHeaderCell>
-						<TableHeaderCell {...headerSortProps("url")}>{t("url")}</TableHeaderCell>
-						<TableHeaderCell>{t("site url")}</TableHeaderCell>
-						<TableHeaderCell {...headerSortProps("lastModified")}>{t("lastModified")}</TableHeaderCell>
-						<TableHeaderCell {...headerSortProps("creator")}>{t("creator")}</TableHeaderCell>
+						<TableHeaderCell {...headerSortProps("size")}>{t("size")}</TableHeaderCell>
+						<TableHeaderCell {...headerSortProps("last_modified")}>{t("lastModified")}</TableHeaderCell>
 						<TableHeaderCell>{t("actions")}</TableHeaderCell>
 					</TableRow>
 				</TableHeader>
 
 				<TableBody className="w-screen">
 					{currentPage?.data && currentPage.data.length > 0
-						? rows.map(({ item, selected }) => (
+						? rows.map(({ item, selected, onClick, onKeyDown }) => (
 								<TableRow key={item.id} className="w-screen">
-									<TableSelectionCell checked={selected} checkboxIndicator={{ "aria-label": "Select row" }} />
+									<TableSelectionCell
+										onClick={onClick}
+										onKeyDown={onKeyDown}
+										checked={selected}
+										checkboxIndicator={{ "aria-label": "Select row" }}
+									/>
 									<TableCell>
 										<TableCellLayout>{item.name}</TableCellLayout>
 									</TableCell>
 									<TableCell>
-										<TableCellLayout>{item.url}</TableCellLayout>
-									</TableCell>
-									<TableCell>
-										<a onClick={() => nav(getExcelPage(item.id))}>{item.url}</a>
-									</TableCell>
-
-									<TableCell>
-										<TableCellLayout>{new Date(item.lastModified).toISOString().split("T")[0]}</TableCellLayout>
-									</TableCell>
-									<TableCell>
-										<TableCellLayout
-											media={
-												<Avatar
-													aria-label={item.creator.firstName}
-													name={item.creator.firstName + " " + item.creator.lastName}
-													badge={{ status: "available" }}
-												/>
-											}
-										>
-											{item.creator.firstName} {item.creator.lastName}
+										<TableCellLayout>
+											{item.size / 1024 > 1024
+												? `${(item.size / 1024 / 1024).toFixed(2)}МБ`
+												: `${(item.size / 1024).toFixed(2)}КБ`}
 										</TableCellLayout>
+									</TableCell>
+									<TableCell>
+										<TableCellLayout>{new Date(item.last_modified).toISOString().split("T")[0]}</TableCellLayout>
 									</TableCell>
 									<TableCell role="gridcell">
 										<TableCellLayout>
@@ -285,7 +262,22 @@ export const TableDataTable: FC<DataTableProps> = () => {
 												style={{ marginRight: 5 }}
 												aria-label="Edit"
 											/>
-											<Button onClick={() => openModal("delete", item)} icon={<DeleteRegular />} aria-label="Delete" />
+											<Button
+												style={{ marginRight: 5 }}
+												onClick={() => openModal("delete", item)}
+												icon={<DeleteRegular />}
+												aria-label="Delete"
+											/>
+											<Button
+												style={{ marginRight: 5 }}
+												href={item.url}
+												download={item.name}
+												icon={<ArrowDownloadFilled />}
+												aria-label="Download"
+											/>
+											<Button onClick={() => nav(getExcelPage(item.name))} aria-label="Go">
+												{t("go")}
+											</Button>
 										</TableCellLayout>
 									</TableCell>
 								</TableRow>

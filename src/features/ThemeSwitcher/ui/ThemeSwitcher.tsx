@@ -12,7 +12,7 @@ export const ThemeSwitcher = memo(() => {
 				setTheme("light");
 				break;
 			case "light":
-				setTheme("light");
+				setTheme("dark");
 				break;
 		}
 	}, [theme, setTheme]);

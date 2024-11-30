@@ -1,10 +1,11 @@
 import { useSystemStore } from "@/entities/System";
 import { Button } from "@fluentui/react-components";
-import React, { Dispatch, FC, SetStateAction } from "react";
+import React, { Dispatch, FC, SetStateAction, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import Spreadsheet, { CellBase, createFormulaParser, Matrix } from "react-spreadsheet";
+import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
+import { getFormulas } from "./formulas";
 
-type SpreadsheetData = Matrix<CellBase>;
+export type SpreadsheetData = Matrix<CellBase>;
 
 interface ExcelTableProps {
 	data: Matrix<CellBase>;
@@ -32,16 +33,7 @@ export const ExcelTable: FC<ExcelTableProps> = ({ data, handleCellChange, setDat
 	const { theme } = useSystemStore();
 	const { t } = useTranslation();
 
-	const customFormulaParser = (data: SpreadsheetData) => {
-		return createFormulaParser(data, {
-			functions: {
-				SUMMA: (a: { value: number }, b: { value: number }) => {
-					return a.value + b.value;
-				},
-			},
-		});
-	};
-
+	const { customFormulaParser } = getFormulas();
 	const addColumn = React.useCallback(
 		() =>
 			setData((data) =>
@@ -77,9 +69,32 @@ export const ExcelTable: FC<ExcelTableProps> = ({ data, handleCellChange, setDat
 		});
 	}, [setData]);
 
+	useEffect(() => {
+		const { columns, rows } = getSize(data);
+		let columnLength = 10 - columns;
+		let rowLength = 10 - rows;
+		console.log(columnLength, rowLength);
+
+		// if (columnLength > 0) {
+		// 	while (columnLength > 0) {
+		// 		console.log(columnLength);
+		// 		addColumn();
+		// 		columnLength--;
+		// 	}
+		// }
+
+		// if (rowLength > 0) {
+		// 	while (rowLength > 0) {
+		// 		console.log(rowLength);
+		// 		addRow();
+		// 		rowLength--;
+		// 	}
+		// }
+	}, []);
+
 	return (
-		<div className="flex-col gap-3">
-			<div>
+		<div>
+			<div className="flex justify-between gap-2 mb-3">
 				<Button onClick={addColumn}>{t("add column")}</Button>
 				<Button onClick={removeColumn}>{t("remove column")}</Button>
 				<Button onClick={addRow}>{t("add row")}</Button>

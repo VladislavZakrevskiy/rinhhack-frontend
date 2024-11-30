@@ -3,7 +3,7 @@
 		"outDir": "./dist/",
 		"noImplicitAny": true,
 		"module": "ESNext",
-		"target": "ES2017",
+		"target": "ES2019",
 		"jsx": "react-jsx",
 		"allowJs": true,
 		"moduleResolution": "node",

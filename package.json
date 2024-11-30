@@ -25,6 +25,7 @@
 		"i18next-browser-languagedetector": "^7.2.1",
 		"i18next-http-backend": "^2.5.0",
 		"jszip": "^3.10.1",
+		"mathjs": "^14.0.0",
 		"react": "^18.2.0",
 		"react-data-grid": "^7.0.0-beta.47",
 		"react-dom": "^18.2.0",

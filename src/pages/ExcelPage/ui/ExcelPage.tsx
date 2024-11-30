@@ -32,26 +32,24 @@ const ExcelPage: React.FC = () => {
       socketConnection.emit("get_file");
     });
 
-    socketConnection.on("file_update", (message: WebSocketMessage) => {
+    socketConnection.on("file_update", async (message: WebSocketMessage) => {
       if (message.data) {
         try {
           console.log("Received data:", message.data);
 
-          if (typeof message.data === "string") {
-            const decodedFile = decodeBase64ToArrayBuffer(message.data);
-            if (decodedFile) {
-              console.log("File successfully decoded into ArrayBuffer:", decodedFile);
+          const decodedFile = decodeBase64ToArrayBuffer(message.data);
+          if (decodedFile) {
+            console.log("File successfully decoded into ArrayBuffer:", decodedFile);
 
-              const fileDownloadUrl = URL.createObjectURL(
-                new Blob([decodedFile], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }),
-              );
-              setFileUrl(fileDownloadUrl);
-              console.log("File download URL:", fileDownloadUrl);
-
-              readExcelFile(decodedFile);
-            } else {
-              console.error("Error: file could not be decoded.");
-            }
+            const fileDownloadUrl = URL.createObjectURL(
+              new Blob([decodedFile], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              })
+            );
+            setFileUrl(fileDownloadUrl);
+            await readExcelFile(decodedFile);
+          } else {
+            console.error("Error: file could not be decoded.");
           }
         } catch (error) {
           console.error("Error decoding file:", error);
@@ -89,7 +87,9 @@ const ExcelPage: React.FC = () => {
           const excelBuffer = generateExcelBufferFromData(pendingData.current);
 
           const updatedFileUrl = URL.createObjectURL(
-            new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+            new Blob([excelBuffer], {
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            })
           );
           setFileUrl(updatedFileUrl);
 
@@ -116,10 +116,12 @@ const ExcelPage: React.FC = () => {
         return;
       }
 
-      const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      console.log("Parsed Excel data:", data);
+      const parsedData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      console.log("Parsed Excel data:", parsedData);
 
-      const matrix = data.map((row: any) => row.map((cell: any) => ({ value: cell }) as CellBase));
+      const matrix = parsedData.map((row: any) =>
+        row.map((cell: any) => ({ value: cell }) as CellBase)
+      );
 
       setData(matrix);
       setIsFileLoaded(true);

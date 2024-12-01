@@ -31,6 +31,7 @@ import { TableModal } from "../Modals/Tables/TableModal";
 import { useNavigate } from "react-router-dom";
 import { getExcelPage } from "@/shared/consts/router";
 import { BackupsModal } from "../Modals/BackupsModal";
+import { AxiosResponse } from "axios";
 
 interface DataTableProps {}
 
@@ -98,9 +99,10 @@ export const TableDataTable: FC<DataTableProps> = () => {
 			} else {
 				console.error("No files found");
 			}
-			const res2 = await $api.get<{ backup_folders: { folder_name: string; files: ExcelFile[] }[] }>(
-				"/excel/backup_files",
-			);
+			const res2 = await $api.get<
+				void,
+				AxiosResponse<{ backup_folders: { folder_name: string; files: ExcelFile[] }[] }>
+			>("/excel/backup_files");
 			if (res2.data) {
 				setBackups(res2.data.backup_folders);
 			}
@@ -213,7 +215,7 @@ export const TableDataTable: FC<DataTableProps> = () => {
 			notify();
 		}
 	};
-	console.log(rows);
+
 	return (
 		<>
 			<TableModal
@@ -297,7 +299,7 @@ export const TableDataTable: FC<DataTableProps> = () => {
 														icon={<DeleteRegular />}
 														aria-label="Delete"
 													/>
-													<BackupsModal backups={backups} />
+													<BackupsModal backups={backups} fileName={item.name} />
 												</div>
 												<div className="flex gap-2">
 													<Button

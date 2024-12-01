@@ -44,5 +44,6 @@
   "go": "Go",
   "your tables": "Your tables",
   "redact file": "Updating file",
-  "backups": "Backups"
+  "backups": "Backups",
+  "no backups": "No backups"
 }

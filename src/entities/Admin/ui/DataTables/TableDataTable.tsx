@@ -30,6 +30,7 @@ import { ExcelFile } from "@/shared/types/ExcelFile";
 import { TableModal } from "../Modals/Tables/TableModal";
 import { useNavigate } from "react-router-dom";
 import { getExcelPage } from "@/shared/consts/router";
+import { BackupsModal } from "../Modals/BackupsModal";
 
 interface DataTableProps {}
 
@@ -64,6 +65,7 @@ export const TableDataTable: FC<DataTableProps> = () => {
 	const [currentTables, setCurrentTables] = useState<ExcelFile[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isOperationLoading, setIsOperationLoading] = useState(false);
+	const [backups, setBackups] = useState<{ folder_name: string; files: ExcelFile[] }[]>([]);
 	const {
 		selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected, selectedRows },
 		getRows,
@@ -95,6 +97,12 @@ export const TableDataTable: FC<DataTableProps> = () => {
 				}
 			} else {
 				console.error("No files found");
+			}
+			const res2 = await $api.get<{ backup_folders: { folder_name: string; files: ExcelFile[] }[] }>(
+				"/excel/backup_files",
+			);
+			if (res2.data) {
+				setBackups(res2.data.backup_folders);
 			}
 		} catch (e) {
 			console.log(e);
@@ -281,29 +289,29 @@ export const TableDataTable: FC<DataTableProps> = () => {
 									</TableCell>
 									<TableCell role="gridcell">
 										<TableCellLayout>
-											<Button
-												onClick={() => openModal("update", item)}
-												icon={<EditRegular />}
-												style={{ marginRight: 5 }}
-												aria-label="Edit"
-											/>
-											<Button
-												style={{ marginRight: 5 }}
-												onClick={() => openModal("delete", item)}
-												icon={<DeleteRegular />}
-												aria-label="Delete"
-											/>
-											<Button
-												as="a"
-												style={{ marginRight: 5 }}
-												href={item.download_link}
-												download={item.name}
-												icon={<ArrowDownloadFilled />}
-												aria-label="Download"
-											/>
-											<Button onClick={() => nav(getExcelPage(item.name))} aria-label="Go">
-												{t("go")}
-											</Button>
+											<div className="flex flex-col gap-1 p-2">
+												<div className="flex gap-2">
+													<Button onClick={() => openModal("update", item)} icon={<EditRegular />} aria-label="Edit" />
+													<Button
+														onClick={() => openModal("delete", item)}
+														icon={<DeleteRegular />}
+														aria-label="Delete"
+													/>
+													<BackupsModal backups={backups} />
+												</div>
+												<div className="flex gap-2">
+													<Button
+														as="a"
+														href={item.download_link}
+														download={item.name}
+														icon={<ArrowDownloadFilled />}
+														aria-label="Download"
+													/>
+													<Button onClick={() => nav(getExcelPage(item.name))} aria-label="Go">
+														{t("go")}
+													</Button>
+												</div>
+											</div>
 										</TableCellLayout>
 									</TableCell>
 								</TableRow>

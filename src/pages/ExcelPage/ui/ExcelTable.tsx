@@ -11,6 +11,7 @@ interface ExcelTableProps {
 	data: Matrix<CellBase>;
 	setData: Dispatch<SetStateAction<SpreadsheetData>>;
 	handleCellChange: (newData: SpreadsheetData) => void;
+	fileUrl?: string;
 }
 
 function getRowsCount(matrix: Matrix<unknown>): number {
@@ -29,7 +30,7 @@ function getSize(matrix: Matrix<unknown>) {
 	};
 }
 
-export const ExcelTable: FC<ExcelTableProps> = ({ data, handleCellChange, setData }) => {
+export const ExcelTable: FC<ExcelTableProps> = ({ data, handleCellChange, setData, fileUrl }) => {
 	const { theme } = useSystemStore();
 	const { t } = useTranslation();
 
@@ -75,21 +76,21 @@ export const ExcelTable: FC<ExcelTableProps> = ({ data, handleCellChange, setDat
 		let rowLength = 10 - rows;
 		console.log(columnLength, rowLength);
 
-		// if (columnLength > 0) {
-		// 	while (columnLength > 0) {
-		// 		console.log(columnLength);
-		// 		addColumn();
-		// 		columnLength--;
-		// 	}
-		// }
+		if (columnLength > 0) {
+			while (columnLength > 0) {
+				console.log(columnLength);
+				addColumn();
+				columnLength--;
+			}
+		}
 
-		// if (rowLength > 0) {
-		// 	while (rowLength > 0) {
-		// 		console.log(rowLength);
-		// 		addRow();
-		// 		rowLength--;
-		// 	}
-		// }
+		if (rowLength > 0) {
+			while (rowLength > 0) {
+				console.log(rowLength);
+				addRow();
+				rowLength--;
+			}
+		}
 	}, []);
 
 	return (
@@ -99,6 +100,9 @@ export const ExcelTable: FC<ExcelTableProps> = ({ data, handleCellChange, setDat
 				<Button onClick={removeColumn}>{t("remove column")}</Button>
 				<Button onClick={addRow}>{t("add row")}</Button>
 				<Button onClick={removeRow}>{t("remove row")}</Button>
+				<Button as="a" href={fileUrl} download="modified_file.xlsx">
+					{t("download new")}
+				</Button>
 			</div>
 			<Spreadsheet
 				createFormulaParser={customFormulaParser}

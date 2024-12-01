@@ -5,10 +5,11 @@ import * as XLSX from "xlsx";
 import { Header } from "@/widgets/Header/ui/Header";
 import { Stack } from "@fluentui/react";
 import { useDebounce } from "@/shared/lib/hooks";
-import { Button, Card, Spinner, Title3 } from "@fluentui/react-components";
-import { t } from "i18next";
+import { Card, Spinner, Title3 } from "@fluentui/react-components";
 import { ExcelTable } from "./ExcelTable";
 import ExcelModal from "@/widgets/ExcelModal/ui/ExcelModal";
+import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface WebSocketMessage {
 	action: string;
@@ -19,6 +20,8 @@ interface WebSocketMessage {
 type SpreadsheetData = Matrix<CellBase>;
 
 const ExcelPage: React.FC = () => {
+	const { t } = useTranslation();
+	const { id } = useParams();
 	const [data, setData] = useState<SpreadsheetData>([]);
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [isFileLoaded, setIsFileLoaded] = useState<boolean>(false);
@@ -40,7 +43,7 @@ const ExcelPage: React.FC = () => {
 
 			// console.log("emit");
 			socket?.emit("upload_file", {
-				filename: "test.xlsx",
+				filename: id,
 				data: base64File,
 			});
 		} catch (error) {
@@ -58,7 +61,7 @@ const ExcelPage: React.FC = () => {
 
 		socketConnection.on("connect", () => {
 			// console.log("Socket connected: ", socketConnection.id);
-			socketConnection.emit("get_file");
+			socketConnection.emit("get_file", { filename: id });
 		});
 
 		socketConnection.on("file_update", async (message: WebSocketMessage) => {
@@ -146,24 +149,19 @@ const ExcelPage: React.FC = () => {
 			>
 				<Card className="w-full min-h-[50vh]">
 					<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-						<Title3>Редактирование файла</Title3>
+						<Title3>
+							{t("redact file")} {id}
+						</Title3>
 						<ExcelModal />
 					</div>
 
 					<div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
 						{isFileLoaded ? (
-							<ExcelTable data={data} setData={setData} handleCellChange={handleCellChange} />
+							<ExcelTable fileUrl={fileUrl!} data={data} setData={setData} handleCellChange={handleCellChange} />
 						) : (
 							<Spinner size="large" />
 						)}
 					</div>
-					{fileUrl && (
-						<div>
-							<Button href={fileUrl} download="modified_file.xlsx">
-								{t("download new")}
-							</Button>
-						</div>
-					)}
 				</Card>
 			</Stack>
 		</>

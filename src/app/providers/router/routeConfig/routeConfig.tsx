@@ -52,7 +52,7 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.EXCELPAGE]: {
 		path: getExcelPage(":id"),
 		element: <LazyExcelPage />,
-		authOnly: false,
+		authOnly: true,
 	},
 	[AppRoutes.TESTEXCELPAGE]: {
 		path: getTestExcelPage(),

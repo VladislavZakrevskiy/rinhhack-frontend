@@ -39,7 +39,13 @@ export const BackupsModal: FC<BackupsModalProps> = ({ backups, fileName }) => {
 									.files.map((file) => (
 										<div className="grid grid-cols-[2fr_2fr_1fr_1fr]">
 											<Text>{file.name}</Text>
-											<Text>{new Date(file.last_modified).toISOString()}</Text>
+											<Text>
+												{new Date(file.last_modified)
+													.toISOString()
+													.replace("T", " ")
+													.replace("Z", "")
+													.replace(".000", "")}
+											</Text>
 											<Text>
 												{file.size / 1024 > 1024
 													? `${(file.size / 1024 / 1024).toFixed(2)}МБ`

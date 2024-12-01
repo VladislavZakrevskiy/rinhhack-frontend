@@ -27,6 +27,9 @@ const ExcelPage: React.FC = () => {
 	const [isFileLoaded, setIsFileLoaded] = useState<boolean>(false);
 	const [fileUrl, setFileUrl] = useState<string | null>(null);
 
+	const pathname = window.location.pathname;
+	const filename = pathname.split("/").pop();
+
 	const sendToSocket = (newData: SpreadsheetData) => {
 		try {
 			const excelBuffer = generateExcelBufferFromData(newData);
@@ -40,10 +43,9 @@ const ExcelPage: React.FC = () => {
 
 			const base64File = arrayBufferToBase64(excelBuffer);
 			// console.log("Sending modified file in Base64 format:", base64File);
-
 			// console.log("emit");
 			socket?.emit("upload_file", {
-				filename: id,
+				filename: filename,
 				data: base64File,
 			});
 		} catch (error) {
@@ -54,33 +56,33 @@ const ExcelPage: React.FC = () => {
 	const debouncedSendSocket = useDebounce(sendToSocket, 500);
 
 	useEffect(() => {
+		const token = localStorage.getItem("access_token");
 		const socketConnection = io("http://pepper-coding.online", {
 			transports: ["websocket"],
+			auth: {
+				token: `Bearer ${token}`,
+			},
 		});
+		console.log(token);
 		setSocket(socketConnection);
 
 		socketConnection.on("connect", () => {
 			// console.log("Socket connected: ", socketConnection.id);
-			socketConnection.emit("get_file", { filename: id });
+			console.log(filename);
+			socketConnection.emit("get_file", { filename });
 		});
 
 		socketConnection.on("file_update", async (message: WebSocketMessage) => {
-			// console.log(message.data);
 			if (message.data) {
 				try {
-					// console.log("Received data:", message.data);
-
 					const decodedFile = decodeBase64ToArrayBuffer(message.data);
 					if (decodedFile) {
-						// console.log("File successfully decoded into ArrayBuffer:", decodedFile);
+						await readExcelFile(decodedFile);
 
 						const fileDownloadUrl = URL.createObjectURL(
-							new Blob([decodedFile], {
-								type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-							}),
+							new Blob([decodedFile], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }),
 						);
 						setFileUrl(fileDownloadUrl);
-						await readExcelFile(decodedFile);
 					} else {
 						console.error("Error: file could not be decoded.");
 					}
@@ -102,7 +104,6 @@ const ExcelPage: React.FC = () => {
 	}, []);
 
 	const handleCellChange = (newData: SpreadsheetData) => {
-		// console.log("handleCellChange");
 		if (JSON.stringify(newData) === JSON.stringify(data)) {
 			return;
 		}
@@ -112,6 +113,7 @@ const ExcelPage: React.FC = () => {
 		}
 
 		setData(newData);
+
 		debouncedSendSocket(newData);
 	};
 
@@ -125,16 +127,22 @@ const ExcelPage: React.FC = () => {
 			}
 
 			const parsedData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-			// console.log("Parsed Excel data:", parsedData);
+			const updatedData = addEmptyRowAndColumn(parsedData);
 
 			// @ts-ignore
-			const matrix = parsedData.map((row) => row.map((cell) => ({ value: cell }) as CellBase));
+			const matrix = updatedData.map((row) => row.map((cell) => ({ value: cell }) as CellBase));
 
 			setData(matrix);
 			setIsFileLoaded(true);
 		} catch (error) {
 			console.error("Error reading or parsing Excel file:", error);
 		}
+	};
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const addEmptyRowAndColumn = (data: any[]) => {
+		data.push(new Array(data[0].length).fill(""));
+		data.forEach((row) => row.push(""));
+		return data;
 	};
 
 	return (
